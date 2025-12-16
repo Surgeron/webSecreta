@@ -189,6 +189,12 @@ async function handleStartGame() {
         return;
     }
 
+    // ⛔ NUEVA VALIDACIÓN: Bloquear el modo 'sonoro'
+    if (modoRevelacion === 'sonoro') {
+        alert("El modo 'Sonoro' aún no está disponible en esta versión. Por favor, selecciona el modo 'Clásico' para iniciar la partida.");
+        return; // Detiene la ejecución de la función
+    }
+
     // --- Si la validación es exitosa, preparamos el juego ---
     console.log(`Iniciando juego: ${numJugadores} jugadores, ${numImpostores} impostores, Modo: ${modoRevelacion}, Categoría ID: ${categoriaId}`);
     
@@ -447,7 +453,7 @@ async function loadGameComponent(componentPath, callback = null) {
 let currentGameState = null;
 
 // Duración de la pulsación para el modo clásico (milisegundos)
-const REVEAL_DURATION = 1500; 
+const REVEAL_DURATION = 1000; 
 let pressTimer = null;
 
 /**
