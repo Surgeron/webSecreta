@@ -614,16 +614,16 @@ function nextPlayer() {
     // 1. Ocultar el botón inmediatamente
     const nextBtn = document.getElementById('next-player-btn');
     if (nextBtn) {
-        nextBtn.style.display = 'none'; // Asegurar que el botón desaparece
+        nextBtn.style.display = 'none';
     }
     
     currentGameState.currentPlayerIndex++;
     
-    // Verificar si el juego ha terminado
+    // Verificar si el juego ha terminado (todos los jugadores han visto su rol)
     if (currentGameState.currentPlayerIndex >= currentGameState.config.jugadores) {
-        alert("¡Todos los roles revelados! La ronda comienza ahora.");
-        // TODO: Implementar la transición a la pantalla de juego principal aquí
-        location.reload(); 
+        
+        // --- CAMBIO CLAVE: Cargar la pantalla de juego iniciado ---
+        loadGameComponent('components/game-started.html', initializeGameStartedScreen); 
         return;
     }
 
@@ -690,9 +690,28 @@ function updateRevealScreen(playerIndex) {
         document.getElementById('reveal-prompt').querySelector('p').textContent = 'Toca la pantalla para revelar tu rol por voz.';
     }
 }
-// --- Actualizar handleStartGame para llamar a la nueva lógica ---
-// js/app.js (Dentro de la función handleStartGame)
-/*
-    // La parte final de handleStartGame debe llamar a:
-    showRoleRevealScreen(gameConfig);
-*/
+
+
+// =========================================================
+// juego iniciado, proximamente sistema de votación
+// =========================================================}
+
+/**
+ * Inicializa la lógica de la pantalla simple "Juego Iniciado".
+ */
+function initializeGameStartedScreen() {
+    console.log("Juego iniciado. Esperando a que los jugadores regresen al menú.");
+    
+    const goHomeBtn = document.getElementById('go-home-btn');
+    if (goHomeBtn) {
+        goHomeBtn.addEventListener('click', goToHome);
+    }
+}
+
+/**
+ * Función que regresa al usuario a la pantalla principal.
+ */
+function goToHome() {
+    // Simplemente recargamos la página para volver al index y su flujo de carga inicial
+    location.reload(); 
+}
