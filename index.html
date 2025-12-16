@@ -1,78 +1,26 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Impostor - Local</title>
+    <title>El Impostor - Juego de Deducción</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-light">
+<body>
+    <!-- Contenedor principal de la aplicación -->
+    <div id="app"></div>
 
-    <div class="container py-4">
-        <header class="text-center mb-5">
-            <h1 class="display-4 fw-bold text-primary">🕵️‍♂️ El Impostor</h1>
-            <p class="lead">¿Quién tiene la palabra diferente?</p>
-        </header>
-
-        <section id="menu-principal" class="d-grid gap-3 col-lg-6 mx-auto">
-            <button class="btn btn-success btn-lg" onclick="showSection('config-partida')">Nueva Partida</button>
-            <button class="btn btn-outline-primary" onclick="showSection('gestor-categorias')">Gestionar Palabras</button>
-            <button class="btn btn-outline-secondary" onclick="showSection('reglas')">Reglas del Juego</button>
-        </section>
-
-        <section id="config-partida" class="d-none col-lg-6 mx-auto">
-            <div class="card shadow-sm p-4">
-                <h3>Configuración</h3>
-                <div class="mb-3">
-                    <label class="form-label">Número de Jugadores:</label>
-                    <input type="number" id="total-jugadores" class="form-control" value="3" min="3" max="12">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Categoría:</label>
-                    <select id="select-categoria" class="form-select">
-                        <option value="general">Cargando categorías...</option>
-                    </select>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary w-100" onclick="iniciarJuego()">¡Empezar!</button>
-                    <button class="btn btn-light" onclick="showSection('menu-principal')">Volver</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="gestor-categorias" class="d-none col-lg-8 mx-auto">
-            <div class="card shadow-sm p-4">
-                <h3>Gestor de Palabras</h3>
-                <div class="input-group mb-3">
-                    <input type="text" id="nueva-palabra" class="form-control" placeholder="Nueva palabra...">
-                    <select id="categoria-destino" class="form-select">
-                        <option value="Objetos">Objetos</option>
-                        <option value="Animales">Animales</option>
-                        <option value="Lugares">Lugares</option>
-                    </select>
-                    <button class="btn btn-success" onclick="guardarPalabra()">Añadir</button>
-                </div>
-                <ul class="list-group" id="lista-palabras-preview">
-                    </ul>
-                <button class="btn btn-light mt-3" onclick="showSection('menu-principal')">Volver</button>
-            </div>
-        </section>
-
-        <section id="reglas" class="d-none col-lg-8 mx-auto">
-            <div class="card shadow-sm p-4">
-                <h3>Cómo jugar</h3>
-                <ul>
-                    <li>Todos reciben una palabra secreta, excepto el <strong>Impostor</strong>.</li>
-                    <li>El Impostor recibe una palabra muy similar o simplemente no sabe nada (según config).</li>
-                    <li>Por turnos, cada uno dice una palabra relacionada.</li>
-                    <li>Al final de la ronda, ¡voten para descubrir quién miente!</li>
-                </ul>
-                <button class="btn btn-primary" onclick="showSection('menu-principal')">Entendido</button>
-            </div>
-        </section>
-    </div>
-
-    <script src="js/main.js"></script>
-    </body>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/pages.js"></script>
+    <script src="js/app.js"></script>
+</body>
 </html>
