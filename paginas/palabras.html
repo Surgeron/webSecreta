@@ -1,0 +1,19 @@
+<div class="game-card animate__animated animate__fadeIn">
+    <h2 class="text-center mb-4 text-info">Gestor de Palabras</h2>
+    
+    <p class="text-light-emphasis">Introduce las palabras para esta categoría. Sepáralas por comas o saltos de línea. Asegúrate de que haya al menos [X] palabras para la partida.</p>
+    
+    <div class="mb-3">
+        <label for="palabrasInput" class="form-label text-warning">Lista de Palabras:</label>
+        <textarea class="form-control bg-dark text-white border-secondary" id="palabrasInput" rows="8" placeholder="Ejemplo: Manzana, Pera, Uva, Sandía, Naranja"></textarea>
+    </div>
+
+    <div class="d-grid gap-2">
+        <button class="btn btn-success btn-lg-custom fw-bold" onclick="guardarPalabras()">
+            GUARDAR Y USAR
+        </button>
+        <button class="btn btn-outline-secondary btn-lg-custom" onclick="navigateTo('inicio')">
+            Volver al inicio
+        </button>
+    </div>
+</div>
