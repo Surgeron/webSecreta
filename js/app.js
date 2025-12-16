@@ -6,29 +6,24 @@
  * @param {string} componentPath - La ruta al archivo HTML del componente.
  * @param {function} callback - Función a ejecutar después de cargar el contenido.
  */
-async function loadComponent(tabId, componentPath, callback = null) {
-    const container = document.getElementById(tabId);
-    if (!container) return; // Salir si el contenedor no existe
+async function loadComponent(targetId, componentPath, callback = null) {
+    const targetElement = document.getElementById(targetId);
+    if (!targetElement) return;
 
     try {
-        // 1. Realizar la petición Fetch para obtener el contenido
         const response = await fetch(componentPath);
-        if (!response.ok) {
-            throw new Error(`Error al cargar el componente: ${response.statusText}`);
-        }
-        const htmlContent = await response.text();
-
-        // 2. Insertar el contenido en el contenedor
-        container.innerHTML = htmlContent;
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
-        // 3. Ejecutar la función de inicialización específica (si existe)
+        targetElement.innerHTML = await response.text();
+
+        // 🚨 CRUCIAL: Si el callback falla (debido a un error de Firebase), el error debe atraparse.
         if (callback) {
-            callback();
+            await callback(); // Usamos await aquí, ya que initializeGameConfig y CategoryManager llaman a getCategories (async)
         }
 
     } catch (error) {
-        console.error("Fallo al cargar el componente:", error);
-        container.innerHTML = `<p class="alert alert-danger">Error: No se pudo cargar la interfaz. ${error.message}</p>`;
+        console.error(`Fallo al cargar el componente ${componentPath}:`, error);
+        targetElement.innerHTML = `<p class="alert alert-danger">Error al cargar la interfaz. ${error.message}</p>`;
     }
 }
 
@@ -227,59 +222,79 @@ async function handleStartGame() {
  * Renderiza la lista de categorías guardadas en la interfaz.
  * @param {object[]} categories - La lista de categorías.
  */
-function renderCategoryList(categories) {
-    const listContainer = document.getElementById('lista-categorias');
-    if (!listContainer) return;
+async function renderCategoryList() {
+    const categoriesContainer = document.getElementById('categories-list');
+    categoriesContainer.innerHTML = '<p class="text-info">Cargando categorías...</p>'; 
 
-    if (categories.length === 0) {
-        listContainer.innerHTML = '<p class="text-center text-info mt-4">Aún no hay categorías. ¡Crea una nueva!</p>';
-        return;
+    try {
+        const categories = await getCategories(); // Asumimos éxito
+
+        if (categories.length === 0) {
+            categoriesContainer.innerHTML = '<p class="alert alert-warning">No hay categorías guardadas. ¡Crea una!</p>';
+            return;
+        }
+
+        let htmlContent = '';
+        categories.forEach(category => {
+            // Este es un ejemplo. Asegúrate de que el ID (category.id) 
+            // se inyecta correctamente en los data-id para editar/eliminar
+            htmlContent += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${category.name} (${category.words.length} palabras)
+                    <div>
+                        <button class="btn btn-sm btn-warning edit-category-btn" data-id="${category.id}">Editar</button>
+                        <button class="btn btn-sm btn-danger delete-category-btn" data-id="${category.id}">Eliminar</button>
+                    </div>
+                </li>
+            `;
+        });
+        
+        categoriesContainer.innerHTML = `<ul class="list-group">${htmlContent}</ul>`;
+        
+        // ¡No olvides agregar los listeners que corregimos antes!
+        document.querySelectorAll('.edit-category-btn').forEach(button => {
+            button.addEventListener('click', handleEditCategory);
+        });
+        document.querySelectorAll('.delete-category-btn').forEach(button => {
+            button.addEventListener('click', handleDeleteCategory);
+        });
+
+    } catch (error) {
+        console.error("Fallo al renderizar la lista de categorías:", error);
+        categoriesContainer.innerHTML = '<p class="alert alert-danger">Error: No se pudieron cargar las categorías.</p>';
     }
-
-    listContainer.innerHTML = '';
-    
-    // Crear una card de Bootstrap por cada categoría
-    categories.forEach(cat => {
-        const wordCount = cat.words ? cat.words.length : 0;
-        const card = document.createElement('div');
-        card.className = 'card bg-dark border-secondary mb-3';
-        card.innerHTML = `
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="card-title text-warning">${cat.name}</h5>
-                    <p class="card-text text-muted">${wordCount} Palabras</p>
-                </div>
-                <div>
-                    <button class="btn btn-outline-info btn-sm edit-btn me-2" data-id="${cat.id}">
-                        ✏️ Editar
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm delete-btn" data-id="${cat.id}">
-                        🗑️ Eliminar
-                    </button>
-                </div>
-            </div>
-        `;
-        listContainer.appendChild(card);
-    });
-    
-    // Añadir eventos a los nuevos botones
-    document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', handleEditCategory));
-    document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', handleDeleteCategory));
 }
 
 /**
  * Carga las categorías desde IndexedDB y las renderiza.
  */
 async function loadAndRenderCategories() {
+    const select = document.getElementById('select-categoria');
+    
+    // Si la función falla al obtener las categorías, podemos ver la excepción aquí.
     try {
-        const categories = await getCategories();
-        renderCategoryList(categories);
-        // También actualizamos el selector de categorías en la pestaña de juego.
-        updateCategorySelect(categories); 
+        const categories = await getCategories(); // Asumimos que esto funciona
+
+        // Limpiar el select y añadir la opción por defecto
+        select.innerHTML = '';
+        select.innerHTML += '<option value="" disabled selected>Selecciona una Categoría</option>';
+
+        // --- VERIFICACIÓN CLAVE DEL RENDERIZADO ---
+        if (categories && categories.length > 0) {
+            categories.forEach(category => {
+                // 1. category.id debe ser el valor del option (string)
+                // 2. category.name debe ser el texto visible
+                select.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+            });
+        }
+        
+        // El resto de la lógica (updateImpostorMax)
+        updateImpostorMax();
+
     } catch (error) {
-        console.error("Error al cargar las categorías:", error);
-        document.getElementById('lista-categorias').innerHTML = 
-            '<p class="alert alert-danger mt-4">Error al cargar la base de datos de categorías.</p>';
+        console.error("Fallo al cargar y renderizar categorías desde Firebase:", error);
+        // Si hay un error, mostrarlo en el select
+        if(select) select.innerHTML = '<option value="" disabled selected>ERROR: No se pudieron cargar las categorías.</option>';
     }
 }
 
@@ -288,7 +303,7 @@ async function loadAndRenderCategories() {
  */
 async function handleCategoryFormSubmit(event) {
     event.preventDefault();
-    
+    const id = document.getElementById('category-id').value;
     const categoryId = document.getElementById('category-id').value;
     const name = document.getElementById('category-name').value.trim();
     const wordsText = document.getElementById('category-words').value.trim();
@@ -305,12 +320,13 @@ async function handleCategoryFormSubmit(event) {
 
     const category = {
         name: name,
-        words: words
+        words: words,
+        id: id || undefined
     };
 
     // Si categoryId existe, es una edición
     if (categoryId) {
-        category.id = parseInt(categoryId);
+        category.id = categoryId;
     }
 
     try {
@@ -332,7 +348,7 @@ async function handleCategoryFormSubmit(event) {
  * Prepara el modal para la edición.
  */
 async function handleEditCategory(event) {
-    const id = parseInt(event.currentTarget.getAttribute('data-id'));
+    const id = event.currentTarget.getAttribute('data-id');
     // Utilizamos getCategories, pero si tu base de datos crece, sería mejor una función getCategoryById
     const allCategories = await getCategories(); 
     const category = allCategories.find(c => c.id === id);
@@ -364,7 +380,7 @@ async function handleEditCategory(event) {
  * Maneja la eliminación de una categoría.
  */
 async function handleDeleteCategory(event) {
-    const id = parseInt(event.currentTarget.getAttribute('data-id'));
+    const id = event.currentTarget.getAttribute('data-id');
     const name = event.currentTarget.closest('.card').querySelector('.card-title').textContent;
 
     if (confirm(`¿Estás seguro de que quieres eliminar la categoría "${name}"? Esta acción es irreversible.`)) {
@@ -408,20 +424,28 @@ function setupNewCategoryModal(modalElement) {
 /**
  * Inicializa la lógica para el gestor de categorías. (La función llamada por loadComponent)
  */
-export function initializeCategoryManager() {
-    console.log("Gestor de categorías inicializado.");
-    
-    // 1. Añadir el listener para el formulario
-    document.getElementById('category-form').addEventListener('submit', handleCategoryFormSubmit);
+function initializeCategoryManager() {
+    console.log("Inicializando Gestor de Categorías...");
 
-    // 2. Configurar el modal para que se limpie al abrir
-    const modalElement = document.getElementById('newCategoryModal');
-    if(modalElement) {
-        setupNewCategoryModal(modalElement);
+    // 1. Añadir el listener al botón de 'Crear nueva Categoría'
+    const addBtn = document.getElementById('add-category-btn');
+    if (addBtn) {
+        addBtn.addEventListener('click', showAddCategoryModal); 
     }
-    
-    // 3. Cargar y renderizar la lista inicial
-    loadAndRenderCategories();
+
+    // 2. LLAMADA CLAVE: Renderizar la lista de categorías
+    // Como getCategories es asíncrono, renderCategoryList debe ser asíncrono
+    // y debe ser llamada aquí.
+    renderCategoryList(); // <-- ¡Asegúrate de que esta línea existe!
+}
+
+function showCategoryManager() {
+    // LLAMADA CLAVE: Asegura que el componente se carga y que el callback se ejecuta.
+    loadComponent(
+        'app-content', 
+        'components/category-manager.html', 
+        initializeCategoryManager // <-- Aquí se pasa la función que llama a renderCategoryList
+    );
 }
 
 // =========================================================

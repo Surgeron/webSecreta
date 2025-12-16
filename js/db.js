@@ -1,124 +1,81 @@
-// js/db.js
+// js/db.js (¡Ahora usa Firestore!)
 
-// Nombre y versión de la base de datos
-const DB_NAME = 'ImpostorWordDB';
-const DB_VERSION = 1;
-// Nombre del almacén de objetos (equivalente a una "tabla")
-const CATEGORIES_STORE = 'categories';
+import { db } from './firebase-config.js';
+import { 
+    collection, 
+    getDocs, 
+    addDoc, 
+    updateDoc, 
+    deleteDoc, 
+    doc 
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"; // ¡Usar la URL completa aquí!
 
-let db;
-
-/**
- * 1. Inicializa y abre la conexión con IndexedDB.
- * @returns {Promise<IDBDatabase>} La promesa que se resuelve con el objeto de la BD.
- */
-function openDB() {
-    return new Promise((resolve, reject) => {
-        // Pedir abrir la BD
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-        // Se ejecuta si la versión es diferente o si la BD se crea por primera vez
-        request.onupgradeneeded = (event) => {
-            db = event.target.result;
-            // Si el almacén no existe, lo creamos
-            if (!db.objectStoreNames.contains(CATEGORIES_STORE)) {
-                // Creamos el almacén de objetos. Usaremos el "id" de la categoría como clave primaria.
-                db.createObjectStore(CATEGORIES_STORE, { keyPath: 'id', autoIncrement: true });
-            }
-        };
-
-        // Éxito al abrir
-        request.onsuccess = (event) => {
-            db = event.target.result;
-            console.log("IndexedDB: Conexión exitosa.");
-            resolve(db);
-        };
-
-        // Error al abrir
-        request.onerror = (event) => {
-            console.error("IndexedDB: Error al abrir", event.target.error);
-            reject(event.target.error);
-        };
-    });
-}
-
-/**
- * Función auxiliar para obtener una transacción de lectura/escritura.
- * @param {string} mode - 'readonly' o 'readwrite'.
- * @returns {IDBObjectStore} El almacén de objetos listo.
- */
-function getObjectStore(mode) {
-    if (!db) {
-        throw new Error("Base de datos no inicializada. Llama a openDB primero.");
-    }
-    const transaction = db.transaction(CATEGORIES_STORE, mode);
-    return transaction.objectStore(CATEGORIES_STORE);
-}
+// Nombre de la colección (equivalente a la "tabla") en Firestore
+const CATEGORIES_COLLECTION = 'categories';
+const categoriesCollection = collection(db, CATEGORIES_COLLECTION);
 
 // =========================================================
-// OPERACIONES CRUD (Create, Read, Update, Delete)
+// OPERACIONES CRUD CON FIRESTORE
 // =========================================================
 
 /**
- * 2. Guarda una nueva categoría o actualiza una existente.
- * @param {object} category - { id?: number, name: string, words: string[] }
+ * 1. Guarda una nueva categoría o actualiza una existente.
+ * @param {object} category - { id?: string, name: string, words: string[] }
  * @returns {Promise<void>}
  */
 export async function saveCategory(category) {
-    await openDB(); // Asegura la conexión
-    return new Promise((resolve, reject) => {
-        try {
-            const store = getObjectStore('readwrite');
-            // put() inserta si no existe el ID o actualiza si existe
-            const request = store.put(category);
-
-            request.onsuccess = () => resolve();
-            request.onerror = (event) => reject(event.target.error);
-        } catch (error) {
-            reject(error);
-        }
-    });
+    // Si la categoría tiene un ID, es una ACTUALIZACIÓN
+    if (category.id) {
+        // Excluir el 'id' al actualizar, ya que no es parte del documento en Firestore
+        const { id, ...dataToUpdate } = category; 
+        const categoryRef = doc(db, CATEGORIES_COLLECTION, id);
+        await updateDoc(categoryRef, dataToUpdate);
+        console.log(`Firestore: Categoría actualizada (ID: ${id})`);
+    } else {
+        // Si no tiene ID, es una NUEVA CATEGORÍA
+        await addDoc(categoriesCollection, {
+            name: category.name,
+            words: category.words
+        });
+        console.log("Firestore: Nueva categoría guardada.");
+    }
 }
 
 /**
- * 3. Obtiene todas las categorías.
+ * 2. Obtiene todas las categorías.
  * @returns {Promise<object[]>} Lista de objetos de categorías.
  */
 export async function getCategories() {
-    await openDB(); // Asegura la conexión
-    return new Promise((resolve, reject) => {
-        try {
-            const store = getObjectStore('readonly');
-            // getAll() recupera todos los registros
-            const request = store.getAll();
-
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = (event) => reject(event.target.error);
-        } catch (error) {
-            reject(error);
-        }
-    });
+    const snapshot = await getDocs(categoriesCollection);
+    
+    // Mapear los documentos de Firestore a objetos JavaScript, 
+    // añadiendo el ID de Firestore como propiedad 'id'
+    const categories = snapshot.docs.map(doc => ({
+        id: doc.id, 
+        ...doc.data()
+    }));
+    
+    console.log(`Firestore: ${categories.length} categorías cargadas.`);
+    return categories;
 }
 
 /**
- * 4. Elimina una categoría por su ID.
- * @param {number} id - El ID de la categoría a eliminar.
+ * 3. Elimina una categoría por su ID.
+ * @param {string} id - El ID de Firestore de la categoría a eliminar.
  * @returns {Promise<void>}
  */
 export async function deleteCategory(id) {
-    await openDB(); // Asegura la conexión
-    return new Promise((resolve, reject) => {
-        try {
-            const store = getObjectStore('readwrite');
-            const request = store.delete(id);
-
-            request.onsuccess = () => resolve();
-            request.onerror = (event) => reject(event.target.error);
-        } catch (error) {
-            reject(error);
-        }
-    });
+    const categoryRef = doc(db, CATEGORIES_COLLECTION, id);
+    await deleteDoc(categoryRef);
+    console.log(`Firestore: Categoría eliminada (ID: ${id}).`);
 }
 
-// Inicializar la conexión cuando se carga el script
-openDB().catch(e => console.error("Fallo la apertura inicial de la BD.", e));
+/**
+ * 4. Obtiene una categoría por su ID (útil para el juego)
+ * NOTA: Esta función es menos eficiente que getCategories si solo la usas para una.
+ * Pero la mantendremos simple para esta versión, ya que getCategories carga todo.
+ */
+export async function getCategoryById(id) {
+    const categories = await getCategories();
+    return categories.find(c => c.id === id);
+}
