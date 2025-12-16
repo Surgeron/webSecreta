@@ -1,0 +1,72 @@
+<h2 class="text-warning mb-4">⚙️ Configuración de la Partida</h2>
+
+<div class="mb-4">
+    <label for="num-jugadores" class="form-label">Número de Jugadores (Mínimo 3):</label>
+    <input type="number" class="form-control form-control-lg bg-dark text-white border-info" id="num-jugadores" value="5" min="3" oninput="updateImpostorMax()">
+    <small class="form-text text-muted">Ajusta el número de personas que jugarán en el dispositivo.</small>
+</div>
+
+<div class="mb-4">
+    <label for="num-impostores" class="form-label">Cantidad de Impostores (1 - <span id="max-impostores-label">X</span>):</label>
+    <input type="number" class="form-control form-control-lg bg-dark text-white border-info" id="num-impostores" value="1" min="1" max="5">
+</div>
+
+<div class="mb-4">
+    <label for="select-categoria" class="form-label">Seleccionar Categoría:</label>
+    <select class="form-select form-select-lg bg-dark text-white border-info" id="select-categoria">
+        <option value="" disabled selected>Cargando categorías...</option>
+        </select>
+</div>
+
+<hr class="border-info my-4">
+
+<h4 class="text-info mb-3">Modo de Revelación:</h4>
+<div class="row g-3">
+    
+    <div class="col-sm-6">
+        <input type="radio" class="btn-check" name="revelacion-mode" id="mode-clasico" value="clasico" autocomplete="off" checked>
+        <label class="btn btn-outline-warning w-100 p-3" for="mode-clasico">
+            <h5>Clásico</h5>
+            <small class="text-muted d-block">El rol se muestra en pantalla al presionar y mantener.</small>
+        </label>
+    </div>
+
+    <div class="col-sm-6">
+        <input type="radio" class="btn-check" name="revelacion-mode" id="mode-sonoro" value="sonoro" autocomplete="off">
+        <label class="btn btn-outline-warning w-100 p-3" for="mode-sonoro">
+            <h5>Sonoro</h5>
+            <small class="text-muted d-block">El rol se lee en voz alta al presionar (usando la voz del dispositivo).</small>
+        </label>
+    </div>
+
+</div>
+
+<div class="d-grid mt-4">
+    <button class="btn btn-warning btn-lg fw-bold" id="iniciar-juego">
+        INICIAR JUEGO
+    </button>
+</div>
+
+<script>
+    function updateImpostorMax() {
+        const numJugadoresInput = document.getElementById('num-jugadores');
+        const numImpostoresInput = document.getElementById('num-impostores');
+        const maxLabel = document.getElementById('max-impostores-label');
+
+        if (numJugadoresInput && numImpostoresInput && maxLabel) {
+            let jugadores = parseInt(numJugadoresInput.value) || 3;
+            if (jugadores < 3) jugadores = 3;
+            numJugadoresInput.value = jugadores;
+
+            const maxImpostores = jugadores - 1; 
+
+            numImpostoresInput.max = maxImpostores;
+            maxLabel.textContent = maxImpostores;
+
+            if (parseInt(numImpostoresInput.value) > maxImpostores) {
+                numImpostoresInput.value = maxImpostores;
+            }
+        }
+    }
+    updateImpostorMax();
+</script>

@@ -1,0 +1,44 @@
+<h2 class="text-warning mb-4">📚 Gestor de Categorías y Palabras</h2>
+
+<div id="gestion-categorias">
+    <p class="text-info">Aquí puedes crear colecciones de palabras temáticas para usar en el juego.</p>
+    
+    <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#newCategoryModal" id="nueva-categoria-btn">
+        + Nueva Categoría
+    </button>
+    
+    <hr class="my-4 border-info">
+    
+    <div id="lista-categorias">
+        <p class="text-center text-muted">Cargando categorías...</p>
+    </div>
+</div>
+
+<div class="modal fade" id="newCategoryModal" tabindex="-1" aria-labelledby="newCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-info">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="newCategoryModalLabel">Crear/Editar Categoría</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="category-form">
+                    <div class="mb-3">
+                        <label for="category-name" class="form-label">Nombre de la Categoría:</label>
+                        <input type="text" class="form-control bg-secondary text-white border-info" id="category-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category-words" class="form-label">Palabras (separadas por coma o nueva línea):</label>
+                        <textarea class="form-control bg-secondary text-white border-info" id="category-words" rows="5" required></textarea>
+                        <small class="form-text text-muted">Mínimo 5 palabras por categoría.</small>
+                    </div>
+                    <input type="hidden" id="category-id" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-warning" form="category-form" id="save-category-btn">Guardar Categoría</button>
+            </div>
+        </div>
+    </div>
+</div>
