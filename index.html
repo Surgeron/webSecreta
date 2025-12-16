@@ -1,95 +1,78 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impostor con Palabras (Local)</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
+    <title>El Impostor - Local</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-dark text-white"> 
+<body class="bg-light">
 
-    <header class="text-center py-4 bg-primary text-white shadow-lg">
-        <div class="container">
-            <h1>🕵️ EL JUEGO DEL IMPOSTOR</h1>
-            <p class="lead">Versión 1.0</p>
-        </div>
-    </header>
+    <div class="container py-4">
+        <header class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary">🕵️‍♂️ El Impostor</h1>
+            <p class="lead">¿Quién tiene la palabra diferente?</p>
+        </header>
 
-    <main class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-8">
-                
-                <ul class="nav nav-pills nav-justified mb-4" id="mainTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="juego-tab" data-bs-toggle="tab" data-bs-target="#juego" type="button" role="tab" aria-controls="juego" aria-selected="true">
-                            ▶️ Iniciar Partida
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="reglas-tab" data-bs-toggle="tab" data-bs-target="#reglas" type="button" role="tab" aria-controls="reglas" aria-selected="false">
-                            ❓ Cómo Jugar
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="categorias-tab" data-bs-toggle="tab" data-bs-target="#categorias" type="button" role="tab" aria-controls="categorias" aria-selected="false">
-                            📚 Gestor de Categorías
-                        </button>
-                    </li>
-                </ul>
+        <section id="menu-principal" class="d-grid gap-3 col-lg-6 mx-auto">
+            <button class="btn btn-success btn-lg" onclick="showSection('config-partida')">Nueva Partida</button>
+            <button class="btn btn-outline-primary" onclick="showSection('gestor-categorias')">Gestionar Palabras</button>
+            <button class="btn btn-outline-secondary" onclick="showSection('reglas')">Reglas del Juego</button>
+        </section>
 
-                <div class="tab-content border border-info p-4 rounded bg-secondary shadow-lg" id="mainTabContent">
-                    
-                    <div class="tab-pane fade show active" id="juego" role="tabpanel" aria-labelledby="juego-tab">
-                        <p class="text-center text-muted">Cargando configuración...</p>
-                        </div>
-
-                    <div class="tab-pane fade" id="reglas" role="tabpanel" aria-labelledby="reglas-tab">
-                        <h2 class="text-warning mb-3">📜 Reglas del Juego</h2>
-                        <div class="p-3 border rounded bg-dark">
-                            <p>El objetivo es simple: Los **Agentes** deben descubrir al **Impostor**. El **Impostor** debe adivinar la palabra clave o evitar ser descubierto.</p>
-                            
-                            <h5 class="mt-4 text-info">Para Agentes:</h5>
-                            <ul>
-                                <li>Todos excepto el Impostor ven la **Palabra Clave**.</li>
-                                <li>En su turno, cada jugador da una **pista de una sola palabra** relacionada con la Palabra Clave.</li>
-                                <li>Las pistas deben ser sutiles para no revelar la palabra al Impostor, pero lo suficientemente claras para que los demás Agentes confíen en ti.</li>
-                            </ul>
-
-                            <h5 class="mt-4 text-info">Para el Impostor:</h5>
-                            <ul>
-                                <li>El Impostor ve el rol "Impostor" y el **nombre de la Categoría**, pero no la Palabra Clave.</li>
-                                <li>Debe dar una pista que parezca relacionada con la Palabra Clave, basándose solo en la Categoría y las pistas de los demás.</li>
-                                <li>Si el tiempo termina o se realiza una votación, el Impostor tiene una última oportunidad para **adivinar la Palabra Clave**.</li>
-                            </ul>
-                            
-                            <p class="mt-4 fst-italic">¡Que comience el engaño!</p>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="categorias" role="tabpanel" aria-labelledby="categorias-tab">
-                        <p class="text-center text-muted">Cargando gestor...</p>
-                        </div>
+        <section id="config-partida" class="d-none col-lg-6 mx-auto">
+            <div class="card shadow-sm p-4">
+                <h3>Configuración</h3>
+                <div class="mb-3">
+                    <label class="form-label">Número de Jugadores:</label>
+                    <input type="number" id="total-jugadores" class="form-control" value="3" min="3" max="12">
                 </div>
-
-                <footer class="text-center mt-5 text-muted">
-                    <p>¡Solo necesitas un dispositivo!</p>
-                </footer>
+                <div class="mb-3">
+                    <label class="form-label">Categoría:</label>
+                    <select id="select-categoria" class="form-select">
+                        <option value="general">Cargando categorías...</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary w-100" onclick="iniciarJuego()">¡Empezar!</button>
+                    <button class="btn btn-light" onclick="showSection('menu-principal')">Volver</button>
+                </div>
             </div>
-        </div>
-    </main>
+        </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
-    <script type="module" src="js/db.js"></script> 
-    <script type="module" src="js/game-logic.js"></script>
-    <script type="module" src="js/app.js"></script>
+        <section id="gestor-categorias" class="d-none col-lg-8 mx-auto">
+            <div class="card shadow-sm p-4">
+                <h3>Gestor de Palabras</h3>
+                <div class="input-group mb-3">
+                    <input type="text" id="nueva-palabra" class="form-control" placeholder="Nueva palabra...">
+                    <select id="categoria-destino" class="form-select">
+                        <option value="Objetos">Objetos</option>
+                        <option value="Animales">Animales</option>
+                        <option value="Lugares">Lugares</option>
+                    </select>
+                    <button class="btn btn-success" onclick="guardarPalabra()">Añadir</button>
+                </div>
+                <ul class="list-group" id="lista-palabras-preview">
+                    </ul>
+                <button class="btn btn-light mt-3" onclick="showSection('menu-principal')">Volver</button>
+            </div>
+        </section>
 
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    
-    <script type="module" src="js/firebase-config.js"></script>  <script type="module" src="js/game-logic.js"></script> 
-    <script type="module" src="js/db.js"></script> <script type="module" src="js/app.js"></script>
-</body>
+        <section id="reglas" class="d-none col-lg-8 mx-auto">
+            <div class="card shadow-sm p-4">
+                <h3>Cómo jugar</h3>
+                <ul>
+                    <li>Todos reciben una palabra secreta, excepto el <strong>Impostor</strong>.</li>
+                    <li>El Impostor recibe una palabra muy similar o simplemente no sabe nada (según config).</li>
+                    <li>Por turnos, cada uno dice una palabra relacionada.</li>
+                    <li>Al final de la ronda, ¡voten para descubrir quién miente!</li>
+                </ul>
+                <button class="btn btn-primary" onclick="showSection('menu-principal')">Entendido</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/main.js"></script>
+    </body>
 </html>
