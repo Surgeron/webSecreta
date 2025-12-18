@@ -28,13 +28,13 @@ const Pages = {
                     <div class="info-card">
                         <div class="info-icon">👥</div>
                         <h3 class="info-title">3+ Jugadores</h3>
-                        <p class="info-description">Multijugador local para jugar con amigos en la misma habitación</p>
+                        <p class="info-description">Ideal para jugar con amigos en la misma habitación. Que el Impostor no descubra la palabra</p>
                     </div>
 
                     <div class="info-card">
                         <div class="info-icon">🎭</div>
                         <h3 class="info-title">Encuentra al Impostor</h3>
-                        <p class="info-description">Deduce quién no conoce la palabra secreta antes de que te descubran</p>
+                        <p class="info-description">Deduce quién no conoce la palabra secreta antes de que eliminen a los inocentes</p>
                     </div>
 
                     <div class="info-card">
@@ -46,7 +46,7 @@ const Pages = {
 
                 <!-- Footer -->
                 <div class="footer">
-                    <p>El Impostor v1.0 - Juego de deducción social</p>
+                    <p>El Impostor version: 2.0 alfa-2 - Juego de deducción social</p>
                 </div>
             </div>
         `;
