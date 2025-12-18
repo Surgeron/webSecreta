@@ -53,8 +53,11 @@ const Pages = {
     },
 
     // Página de Configuración (placeholder)
-    config: () => {
-    // Obtener categorías para el selector
+    config: async () => {
+    // Cargar categorías antes de renderizar
+    await WordsManager.loadCategories();
+    
+    // Generar opciones de categorías
     const categoriesOptions = WordsManager.categories.map(cat => 
         `<option value="${cat.id}">${cat.name} (${cat.words?.length || 0} palabras)</option>`
     ).join('');

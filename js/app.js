@@ -15,29 +15,38 @@ const App = {
     },
 
     // Inicializar la aplicación
-    init() {
-        this.render();
-        this.initEventListeners();
-    },
+   async init() {
+    await this.render();
+    this.initEventListeners();
+},
 
     // Navegar a una página
-    navigateTo(page) {
-        if (Pages[page]) {
-            this.currentPage = page;
-            this.render();
-        } else {
-            console.error(`Página "${page}" no encontrada`);
-        }
-    },
+    async navigateTo(page) {
+    if (Pages[page]) {
+        this.currentPage = page;
+        await this.render();
+    } else {
+        console.error(`Página "${page}" no encontrada`);
+    }
+},
 
     // Renderizar la página actual
-    render() {
-        const appContainer = document.getElementById('app');
-        if (appContainer && Pages[this.currentPage]) {
-            appContainer.innerHTML = Pages[this.currentPage]();
-            this.afterRender();
-        }
-    },
+async render() {
+    const appContainer = document.getElementById('app');
+    if (appContainer && Pages[this.currentPage]) {
+        // Mostrar loading mientras se carga
+        appContainer.innerHTML = '<div style="text-align: center; padding: 100px; color: #06b6d4; font-size: 1.5rem;">Cargando...</div>';
+        
+        // Obtener contenido de la página (puede ser asíncrono)
+        const pageContent = await Pages[this.currentPage]();
+        
+        // Renderizar el contenido
+        appContainer.innerHTML = pageContent;
+        
+        // Ejecutar acciones post-render
+        this.afterRender();
+    }
+},
 
     // Ejecutar después de renderizar (para efectos dinámicos)
     afterRender() {
