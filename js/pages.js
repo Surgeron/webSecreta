@@ -302,5 +302,120 @@ const Pages = {
                 </div>
             </div>
         `;
-    }
+    },
+
+    // Página de Revelación de Roles
+reveal: () => {
+    const gameData = App.gameData;
+    const currentPlayer = gameData.players[gameData.currentPlayerIndex];
+    const isLastPlayer = gameData.currentPlayerIndex === gameData.players.length - 1;
+
+    return `
+        <div class="reveal-page">
+            <div class="container">
+                <!-- Indicador de progreso -->
+                <div class="reveal-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${((gameData.currentPlayerIndex + 1) / gameData.players.length) * 100}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        Jugador ${gameData.currentPlayerIndex + 1} de ${gameData.players.length}
+                    </div>
+                </div>
+
+                <!-- Información del jugador -->
+                <div class="reveal-content">
+                    <div class="player-turn-card">
+                        <h2 class="turn-title">Turno de</h2>
+                        <h1 class="player-name-big">${currentPlayer.name}</h1>
+                        <p class="turn-instruction">
+                            ${gameData.revealMode === 'visual' 
+                                ? '👁️ Mantén presionado el botón para ver tu rol' 
+                                : '🎧 Conecta tus auriculares y mantén presionado para escuchar'}
+                        </p>
+                    </div>
+
+                    <!-- Botón de revelación (mantener presionado) -->
+                    <div class="reveal-button-container">
+                        <button 
+                            id="revealButton" 
+                            class="btn-reveal"
+                            onmousedown="RevealUI.startReveal()"
+                            onmouseup="RevealUI.cancelReveal()"
+                            onmouseleave="RevealUI.cancelReveal()"
+                            ontouchstart="RevealUI.startReveal()"
+                            ontouchend="RevealUI.cancelReveal()"
+                        >
+                            <div class="reveal-icon">🔒</div>
+                            <div class="reveal-text">Mantén Presionado</div>
+                            <div class="reveal-progress-ring">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle 
+                                        class="progress-ring-circle" 
+                                        stroke="#06b6d4" 
+                                        stroke-width="4" 
+                                        fill="transparent" 
+                                        r="56" 
+                                        cx="60" 
+                                        cy="60"
+                                        style="stroke-dasharray: 351.858; stroke-dashoffset: 351.858;"
+                                    />
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Área de revelación (oculta inicialmente) -->
+                    <div id="roleRevealArea" class="role-reveal-area" style="display: none;">
+                        <!-- Modo Visual -->
+                        <div id="visualReveal" class="visual-reveal" style="display: none;">
+                            <div class="role-card ${currentPlayer.isImpostor ? 'impostor-card' : 'player-card'}">
+                                ${currentPlayer.isImpostor 
+                                    ? `
+                                    <div class="role-icon impostor-icon">🎭</div>
+                                    <h2 class="role-title impostor-title">ERES EL IMPOSTOR</h2>
+                                    <p class="role-message">Que no te descubran 🤫</p>
+                                    `
+                                    : `
+                                    <div class="role-icon player-icon">📝</div>
+                                    <h2 class="role-title">La palabra es:</h2>
+                                    <div class="secret-word">${gameData.secretWord}</div>
+                                    <p class="role-message">Categoría: ${gameData.category.name}</p>
+                                    `
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Modo Sonoro -->
+                        <div id="audioReveal" class="audio-reveal" style="display: none;">
+                            <div class="audio-card">
+                                <div class="audio-icon">🎧</div>
+                                <div class="audio-status" id="audioStatus">
+                                    <div class="audio-wave">
+                                        <span></span><span></span><span></span><span></span><span></span>
+                                    </div>
+                                    <p>Reproduciendo audio...</p>
+                                </div>
+                                <button class="btn-replay" id="btnReplay" onclick="RevealUI.replayAudio()" style="display: none;">
+                                    🔄 Volver a escuchar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón siguiente jugador (deshabilitado inicialmente) -->
+                    <button 
+                        id="btnNextPlayer" 
+                        class="btn-next-player" 
+                        onclick="RevealUI.nextPlayer()"
+                        disabled
+                        style="display: none;"
+                    >
+                        ${isLastPlayer ? '✅ Ir a Votación' : '➡️ Siguiente Jugador'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+},
 };
