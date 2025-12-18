@@ -3,7 +3,7 @@
 // ============================================
 
 const Pages = {
-    // Página de Inicio
+    // Página de Inicio (sin cambios)
     home: () => {
         return `
             <div class="container">
@@ -67,16 +67,94 @@ const Pages = {
         `;
     },
 
-    // Página de Gestión de Palabras (placeholder)
+    // Página de Gestión de Palabras (COMPLETA)
     words: () => {
         return `
-            <div class="container">
-                <div class="hero-section">
-                    <h1 class="game-title">GESTIÓN DE PALABRAS</h1>
-                    <p class="game-subtitle">Próximamente...</p>
-                    <button class="btn-secondary-custom" onclick="App.navigateTo('home')">
-                        ← Volver al inicio
-                    </button>
+            <div class="words-manager-page">
+                <div class="container">
+                    <!-- Header -->
+                    <div class="words-header">
+                        <button class="btn-back" onclick="App.navigateTo('home')">
+                            ← Volver
+                        </button>
+                        <h1 class="page-title">Gestión de Palabras</h1>
+                    </div>
+
+                    <!-- Layout de 2 columnas -->
+                    <div class="words-layout">
+                        <!-- Columna izquierda: Categorías -->
+                        <div class="categories-panel">
+                            <div class="panel-header">
+                                <h2 class="panel-title">📁 Categorías</h2>
+                                <button class="btn-add-category" onclick="WordsUI.showAddCategoryModal()">
+                                    + Nueva
+                                </button>
+                            </div>
+
+                            <!-- Lista de categorías -->
+                            <div id="categoriesList" class="categories-list">
+                                <div class="loading-message">Cargando categorías...</div>
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha: Palabras -->
+                        <div class="words-panel">
+                            <div class="panel-header">
+                                <h2 class="panel-title" id="wordsPanelTitle">📝 Palabras</h2>
+                                <button 
+                                    class="btn-add-word" 
+                                    id="btnAddWord"
+                                    onclick="WordsUI.showAddWordModal()"
+                                    disabled
+                                >
+                                    + Agregar
+                                </button>
+                            </div>
+
+                            <!-- Lista de palabras -->
+                            <div id="wordsList" class="words-list">
+                                <div class="empty-message">
+                                    <p>👈 Selecciona una categoría para ver sus palabras</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para agregar/editar categoría -->
+                <div id="categoryModal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <h3 class="modal-title" id="categoryModalTitle">Nueva Categoría</h3>
+                        <input 
+                            type="text" 
+                            id="categoryNameInput" 
+                            class="form-input" 
+                            placeholder="Nombre de la categoría"
+                            maxlength="50"
+                        >
+                        <div class="modal-buttons">
+                            <button class="btn-cancel" onclick="WordsUI.closeModals()">Cancelar</button>
+                            <button class="btn-confirm" onclick="WordsUI.saveCategoryFromModal()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para agregar/editar palabra -->
+                <div id="wordModal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <h3 class="modal-title" id="wordModalTitle">Nueva Palabra</h3>
+                        <input 
+                            type="text" 
+                            id="wordInput" 
+                            class="form-input" 
+                            placeholder="Escribe la palabra"
+                            maxlength="30"
+                        >
+                        <div class="modal-buttons">
+                            <button class="btn-cancel" onclick="WordsUI.closeModals()">Cancelar</button>
+                            <button class="btn-confirm" onclick="WordsUI.saveWordFromModal()">Guardar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;

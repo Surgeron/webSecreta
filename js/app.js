@@ -41,11 +41,16 @@ const App = {
 
     // Ejecutar después de renderizar (para efectos dinámicos)
     afterRender() {
-        // Efecto de paralaje con el mouse (solo en página de inicio)
-        if (this.currentPage === 'home') {
-            this.initParallaxEffect();
-        }
-    },
+    // Efecto de paralaje con el mouse (solo en página de inicio)
+    if (this.currentPage === 'home') {
+        this.initParallaxEffect();
+    }
+    
+    // Inicializar gestión de palabras
+    if (this.currentPage === 'words') {
+        WordsUI.init();
+    }
+},
 
     // Efecto de paralaje en las cards
     initParallaxEffect() {
