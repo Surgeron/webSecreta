@@ -533,11 +533,11 @@ function revealRole(silent = true) {
     if (rol === 'IMPOSTOR') {
         roleEl.classList.add('text-danger');
         document.getElementById('agent-info').style.display = 'none';
-        roleEl.textContent = 'IMPOSTOR 😈';
+        roleEl.textContent = 'Eres el IMPOSTOR 😈';
     } else {
         roleEl.classList.add('text-success');
         document.getElementById('agent-info').style.display = 'block';
-        roleEl.textContent = 'AGENTE 🕵️';
+        roleEl.textContent = 'Normal 🕵️‍♂️';
     }
 
     // Ocultar el prompt y mostrar el rol
@@ -598,9 +598,9 @@ function speakRole(rol, word, categoryName) {
     
     let text = `Tu rol es ${rol}. `;
     if (rol === 'AGENTE') {
-        text += `La categoría es ${categoryName} y la palabra clave es ${word}. `;
+        text += `La palabra clave es ${word}. `;
     } else {
-        text += `La categoría es ${categoryName}. Debes adivinar la palabra clave.`;
+        text += `Eres el Impostor. Debes adivinar la palabra clave.`;
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
