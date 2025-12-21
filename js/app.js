@@ -69,6 +69,10 @@ const App = {
         if (this.currentPage === 'reveal') {
             RevealUI.init();
         }
+        // Inicializar votación
+        if (this.currentPage === 'voting') {
+        VotingUI.init();
+        }
     },
 
     // Efecto de paralaje en las cards
