@@ -119,7 +119,7 @@ const RevealUI = {
         // Preparar el texto a reproducir
         let textToSpeak;
         if (currentPlayer.isImpostor) {
-            textToSpeak = 'Eres el impostor. Shh. Eres el impostor. Shh.';
+            textToSpeak = 'Eres el impostor. Repito, Eres el impostor.';
         } else {
             textToSpeak = `La palabra secreta es: ${gameData.secretWord}. Repito: ${gameData.secretWord}.`;
         }
@@ -184,7 +184,7 @@ const RevealUI = {
         // Preparar texto
         let textToSpeak;
         if (currentPlayer.isImpostor) {
-            textToSpeak = 'Eres el impostor. Shh. Eres el impostor. Shh.';
+            textToSpeak = 'Eres el impostor. Repito. Eres el impostor.';
         } else {
             textToSpeak = `La palabra secreta es: ${gameData.secretWord}. Repito: ${gameData.secretWord}.`;
         }

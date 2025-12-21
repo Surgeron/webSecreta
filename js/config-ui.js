@@ -282,13 +282,29 @@ const ConfigUI = {
             return;
         }
 
-        // Asignar roles aleatoriamente
-        const shuffledPlayers = [...this.players].sort(() => Math.random() - 0.5);
-        const playersWithRoles = shuffledPlayers.map((name, index) => ({
+        // Crear array de índices para mezclar
+        const indices = Array.from({ length: this.players.length }, (_, i) => i);
+        
+        // Mezclar índices usando Fisher-Yates shuffle
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        
+        // Los primeros N índices mezclados serán los impostores
+        const impostorIndices = new Set(indices.slice(0, this.impostorCount));
+        
+        // Asignar roles a los jugadores en su orden original
+        const playersWithRoles = this.players.map((name, index) => ({
             name: name,
-            isImpostor: index < this.impostorCount,
+            isImpostor: impostorIndices.has(index),
             votes: 0
         }));
+
+        console.log('🎲 Roles asignados:');
+        playersWithRoles.forEach((p, i) => {
+            console.log(`${i + 1}. ${p.name}: ${p.isImpostor ? '🎭 IMPOSTOR' : '📝 Jugador'}`);
+        });
 
         // Guardar configuración en App
         App.gameData = {
