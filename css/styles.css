@@ -1160,6 +1160,9 @@ grid-template-columns: 1fr;
 /* Botón de revelación (mantener presionado) */
 .reveal-button-container {
     margin: 40px 0;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;
 }
 
 .btn-reveal {
@@ -1398,6 +1401,9 @@ grid-template-columns: 1fr;
     cursor: pointer;
     transition: all 0.3s ease;
     animation: fadeInUp 0.5s ease 0.5s both;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .btn-next-player:hover:not(:disabled) {

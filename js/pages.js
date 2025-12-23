@@ -10,7 +10,7 @@ const Pages = {
                 <!-- Hero Section -->
                 <div class="hero-section">
                     <h1 class="game-title">EL IMPOSTOR</h1>
-                    <p class="game-subtitle">¿Podrás descubrir quién miente?</p>
+                    <p class="game-subtitle">¿Podrás descubrir al mentiroso?</p>
                 </div>
 
                 <!-- Botones principales -->
@@ -19,7 +19,7 @@ const Pages = {
                         🎮 CREAR PARTIDA
                     </button>
                     <button class="btn-secondary-custom" onclick="App.navigateTo('words')">
-                        📝 GESTIONAR PALABRAS
+                        📝 GESTIONAR BANCO DE PALABRAS
                     </button>
                 </div>
 
@@ -34,7 +34,14 @@ const Pages = {
                     <div class="info-card">
                         <div class="info-icon">🎭</div>
                         <h3 class="info-title">Encuentra al Impostor</h3>
-                        <p class="info-description">Deduce quién no conoce la palabra secreta antes de que te descubran</p>
+                        <p class="info-description">Jugadores: Deduzcan quién no conoce la palabra secreta.</p>
+                        <p class="info-description">Impostor: Deduce la palabra secreta y engaña a todos.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">🔎</div>
+                        <h3 class="info-title">Pistas Rebuscadas</h3>
+                        <p class="info-description">Deben decir pistas relacionadas con la palabra secreta. Deben ser lo suficientemente rebuscadas para no dar pistas al impostor. Pero cuidado, puedes sabotearte solo</p>
                     </div>
 
                     <div class="info-card">
@@ -46,7 +53,8 @@ const Pages = {
 
                 <!-- Footer -->
                 <div class="footer">
-                    <p>El Impostor v1.0 - Juego de deducción social</p>
+                    <p>El Impostor v2.0 - By: Surgeron</p>
+                    <p>Derechos Reservados: Carpincho Software 2025</p>
                 </div>
             </div>
         `;
@@ -103,7 +111,7 @@ const Pages = {
                                         <label for="modeVisual" class="mode-card mode-visual">
                                             <span class="mode-icon">👁️</span>
                                             <span class="mode-title">Visual</span>
-                                            <span class="mode-description">Ver en pantalla</span>
+                                            <span class="mode-description">Ves tu rol en pantalla. Evita a los upitis</span>
                                         </label>
                                     </div>
                                     <div class="mode-option" onclick="ConfigUI.selectRevealMode('sonoro')">
@@ -111,7 +119,7 @@ const Pages = {
                                         <label for="modeSonoro" class="mode-card mode-sonoro">
                                             <span class="mode-icon">🎧</span>
                                             <span class="mode-title">Sonoro</span>
-                                            <span class="mode-description">Escuchar con auriculares</span>
+                                            <span class="mode-description">Escuchas tu rol. (Usar Auriculares)</span>
                                         </label>
                                     </div>
                                 </div>
