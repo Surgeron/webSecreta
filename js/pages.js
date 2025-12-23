@@ -491,6 +491,7 @@ const Pages = {
         `;
     },
 
+    // Página de Resultados
     results: () => {
         const gameData = App.gameData;
         
