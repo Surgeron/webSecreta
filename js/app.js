@@ -14,6 +14,9 @@ const App = {
         revealMode: 'visual' // 'visual' o 'sonoro'
     },
 
+        // Configuración pendiente de revancha
+    rematchConfig: null, // AGREGAR ESTA LÍNEA
+
     // Inicializar la aplicación
     async init() {
         await this.render();

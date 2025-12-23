@@ -17,8 +17,16 @@ const RevealUI = {
     startReveal() {
         if (this.isRevealed) return;
 
+        console.log('🔒 Iniciando revelación...');
+
         const button = document.getElementById('revealButton');
         const circle = document.querySelector('.progress-ring-circle');
+        
+        if (!button || !circle) {
+            console.error('❌ No se encontraron elementos del botón');
+            return;
+        }
+        
         const circumference = 2 * Math.PI * 56; // radio = 56
 
         button.classList.add('revealing');
@@ -43,10 +51,18 @@ const RevealUI = {
     cancelReveal() {
         if (this.isRevealed) return;
 
+        console.log('❌ Cancelando revelación...');
+
         clearInterval(this.revealTimer);
         
         const button = document.getElementById('revealButton');
         const circle = document.querySelector('.progress-ring-circle');
+        
+        if (!button || !circle) {
+            console.warn('⚠️ No se encontraron elementos para cancelar');
+            return;
+        }
+        
         const circumference = 2 * Math.PI * 56;
         
         button.classList.remove('revealing');
@@ -201,6 +217,8 @@ const RevealUI = {
     // ============================================
 
     nextPlayer() {
+        console.log('➡️ Pasando al siguiente jugador...');
+        
         // Detener cualquier audio en reproducción
         if (window.speechSynthesis.speaking) {
             window.speechSynthesis.cancel();
@@ -210,15 +228,19 @@ const RevealUI = {
         
         // Verificar si era el último jugador
         if (gameData.currentPlayerIndex >= gameData.players.length - 1) {
+            console.log('✅ Último jugador - Ir a votación');
             // Ir a votación
             App.navigateTo('voting');
         } else {
+            console.log(`🔄 Siguiente jugador (${gameData.currentPlayerIndex + 1} → ${gameData.currentPlayerIndex + 2})`);
             // Pasar al siguiente jugador
             gameData.currentPlayerIndex++;
             
-            // Resetear estado de revelación
-            this.isRevealed = false;
+            // IMPORTANTE: Resetear estado de revelación
+            this.revealTimer = null;
             this.revealProgress = 0;
+            this.isRevealed = false;
+            this.currentUtterance = null;
             
             // Re-renderizar la página
             App.render();
@@ -230,6 +252,19 @@ const RevealUI = {
     // ============================================
 
     init() {
+        console.log('🎭 Inicializando revelación...');
+        
+        // IMPORTANTE: Resetear todo el estado
+        this.revealTimer = null;
+        this.revealProgress = 0;
+        this.isRevealed = false;
+        this.currentUtterance = null;
+        
+        // Detener cualquier audio previo
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        
         // Cargar voces disponibles
         if (window.speechSynthesis) {
             window.speechSynthesis.onvoiceschanged = () => {
@@ -240,5 +275,7 @@ const RevealUI = {
                 console.log('🇪🇸 Voces en español:', spanishVoices.length);
             };
         }
-    }
+        
+        console.log('✅ RevealUI inicializado correctamente');
+    },
 };

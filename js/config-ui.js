@@ -8,23 +8,27 @@ const ConfigUI = {
     selectedCategory: null,
     revealMode: 'visual',
 
-    // ============================================
-    // INICIALIZACIÓN
-    // ============================================
-
+    // Inicialización
     async init() {
         // Cargar categorías si no están cargadas
         if (WordsManager.categories.length === 0) {
             await WordsManager.loadCategories();
         }
 
-        // Reiniciar estado
-        this.players = [];
-        this.impostorCount = 1;
-        this.selectedCategory = null;
-        this.revealMode = 'visual';
-
-        this.updateUI();
+        // Verificar si hay una configuración de revancha pendiente
+        if (App.rematchConfig) {
+            console.log('🎮 Detectada configuración de revancha');
+            this.restoreConfig(App.rematchConfig);
+            // Limpiar el flag
+            App.rematchConfig = null;
+        } else {
+            // Reiniciar estado normal
+            this.players = [];
+            this.impostorCount = 1;
+            this.selectedCategory = null;
+            this.revealMode = 'visual';
+            this.updateUI();
+        }
     },
 
     // ============================================
@@ -76,9 +80,16 @@ const ConfigUI = {
         }
     },
 
-    updateImpostorLimits() {
-        const maxImpostors = Math.max(1, this.players.length - 2);
+   updateImpostorLimits() {
         const hint = document.getElementById('impostorHint');
+        
+        // Validar que el elemento existe
+        if (!hint) {
+            console.warn('⚠️ Elemento impostorHint no encontrado');
+            return;
+        }
+        
+        const maxImpostors = Math.max(1, this.players.length - 2);
         
         if (this.players.length < 3) {
             hint.textContent = 'Agrega al menos 3 jugadores primero';
@@ -91,7 +102,10 @@ const ConfigUI = {
         // Ajustar si el count actual excede el máximo
         if (this.impostorCount > maxImpostors) {
             this.impostorCount = maxImpostors;
-            document.getElementById('impostorCount').value = maxImpostors;
+            const impostorInput = document.getElementById('impostorCount');
+            if (impostorInput) {
+                impostorInput.value = maxImpostors;
+            }
         }
     },
 
@@ -140,6 +154,12 @@ const ConfigUI = {
         const container = document.getElementById('playersList');
         const countElement = document.getElementById('playerCount');
 
+        // Validar que los elementos existen
+        if (!container || !countElement) {
+            console.warn('⚠️ Elementos del DOM no encontrados aún');
+            return;
+        }
+
         countElement.textContent = `(${this.players.length})`;
 
         if (this.players.length === 0) {
@@ -172,8 +192,18 @@ const ConfigUI = {
     },
 
     updateSummary() {
-        // Actualizar categoría
+        // Validar que los elementos existen
         const summaryCategory = document.getElementById('summaryCategory');
+        const summaryMode = document.getElementById('summaryMode');
+        const summaryImpostors = document.getElementById('summaryImpostors');
+        const summaryPlayers = document.getElementById('summaryPlayers');
+        
+        if (!summaryCategory || !summaryMode || !summaryImpostors || !summaryPlayers) {
+            console.warn('⚠️ Elementos del resumen no encontrados');
+            return;
+        }
+        
+        // Actualizar categoría
         if (this.selectedCategory === 'random') {
             summaryCategory.textContent = '🎲 Aleatorio';
             summaryCategory.style.color = '#06b6d4';
@@ -187,19 +217,25 @@ const ConfigUI = {
         }
 
         // Actualizar modo
-        const summaryMode = document.getElementById('summaryMode');
         summaryMode.textContent = this.revealMode === 'visual' ? 'Visual 👁️' : 'Sonoro 🎧';
 
         // Actualizar impostores
-        document.getElementById('summaryImpostors').textContent = this.impostorCount;
+        summaryImpostors.textContent = this.impostorCount;
 
         // Actualizar jugadores
-        document.getElementById('summaryPlayers').textContent = this.players.length;
+        summaryPlayers.textContent = this.players.length;
     },
 
     updateValidation() {
         const messagesContainer = document.getElementById('validationMessages');
         const btnStartGame = document.getElementById('btnStartGame');
+        
+        // Validar que los elementos existen
+        if (!messagesContainer || !btnStartGame) {
+            console.warn('⚠️ Elementos de validación no encontrados');
+            return;
+        }
+        
         const errors = [];
 
         // Validar categoría
@@ -249,7 +285,7 @@ const ConfigUI = {
     // INICIAR JUEGO
     // ============================================
 
-    startGame() {
+   startGame() {
         // Validar una última vez
         if (this.players.length < 3) {
             alert('Se necesitan mínimo 3 jugadores');
@@ -298,7 +334,8 @@ const ConfigUI = {
         const playersWithRoles = this.players.map((name, index) => ({
             name: name,
             isImpostor: impostorIndices.has(index),
-            votes: 0
+            votes: 0,
+            eliminated: false // AGREGAR: inicializar como no eliminado
         }));
 
         console.log('🎲 Roles asignados:');
@@ -306,14 +343,15 @@ const ConfigUI = {
             console.log(`${i + 1}. ${p.name}: ${p.isImpostor ? '🎭 IMPOSTOR' : '📝 Jugador'}`);
         });
 
-        // Guardar configuración en App
+        // IMPORTANTE: Guardar configuración COMPLETA en App
         App.gameData = {
             category: WordsManager.categories.find(c => c.id === finalCategory),
             secretWord: secretWord,
             players: playersWithRoles,
             revealMode: this.revealMode,
             impostorCount: this.impostorCount,
-            currentPlayerIndex: 0
+            currentPlayerIndex: 0, // Resetear índice
+            currentVoterIndex: 0    // Resetear índice de votación
         };
 
         console.log('🎮 Juego iniciado:', App.gameData);
@@ -327,8 +365,68 @@ const ConfigUI = {
     // ============================================
 
     updateUI() {
+    // Validar que estamos en la página correcta antes de actualizar
+        if (App.currentPage !== 'config') {
+            console.warn('⚠️ No estamos en la página de configuración');
+            return;
+        }
+        
+        // Validar que los elementos principales existen
+        if (!document.getElementById('playersList') || !document.getElementById('playerCount')) {
+            console.warn('⚠️ Esperando a que el DOM esté listo...');
+            return;
+        }
+        
         this.renderPlayers();
         this.updateImpostorLimits();
         this.validateAndUpdate();
-    }
+    },
+
+    // ============================================
+// RESTAURAR CONFIGURACIÓN (para revancha)
+// ============================================
+
+    restoreConfig(config) {
+        console.log('🔄 Restaurando configuración:', config);
+        
+        // Restaurar datos internos
+        this.players = [...config.playerNames];
+        this.impostorCount = config.impostorCount;
+        this.revealMode = config.revealMode;
+        this.selectedCategory = config.categoryId;
+
+        // Actualizar select de categoría
+        const categorySelect = document.getElementById('categorySelect');
+        if (categorySelect) {
+            categorySelect.value = config.categoryId;
+        }
+
+        // Actualizar radio de modo
+        const modeRadio = document.getElementById(
+            config.revealMode === 'visual' ? 'modeVisual' : 'modeSonoro'
+        );
+        if (modeRadio) {
+            modeRadio.checked = true;
+        }
+
+        // Actualizar las cards de modo visualmente
+        document.querySelectorAll('.mode-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        const selectedModeCard = document.querySelector(`.mode-${config.revealMode}`);
+        if (selectedModeCard) {
+            selectedModeCard.classList.add('selected');
+        }
+
+        // Actualizar contador de impostores
+        const impostorInput = document.getElementById('impostorCount');
+        if (impostorInput) {
+            impostorInput.value = config.impostorCount;
+        }
+
+        // Actualizar UI completa
+        this.updateUI();
+        
+        console.log('✅ Configuración restaurada exitosamente');
+    },
 };

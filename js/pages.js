@@ -3,7 +3,7 @@
 // ============================================
 
 const Pages = {
-    // Página de Inicio (sin cambios)
+    // Página de Inicio
     home: () => {
         return `
             <div class="container">
@@ -28,13 +28,13 @@ const Pages = {
                     <div class="info-card">
                         <div class="info-icon">👥</div>
                         <h3 class="info-title">3+ Jugadores</h3>
-                        <p class="info-description">Ideal para jugar con amigos en la misma habitación. Que el Impostor no descubra la palabra</p>
+                        <p class="info-description">Multijugador local para jugar con amigos en la misma habitación</p>
                     </div>
 
                     <div class="info-card">
                         <div class="info-icon">🎭</div>
                         <h3 class="info-title">Encuentra al Impostor</h3>
-                        <p class="info-description">Deduce quién no conoce la palabra secreta antes de que eliminen a los inocentes</p>
+                        <p class="info-description">Deduce quién no conoce la palabra secreta antes de que te descubran</p>
                     </div>
 
                     <div class="info-card">
@@ -46,14 +46,14 @@ const Pages = {
 
                 <!-- Footer -->
                 <div class="footer">
-                    <p>El Impostor version: 2.0 alfa-2 - Juego de deducción social</p>
+                    <p>El Impostor v1.0 - Juego de deducción social</p>
                 </div>
             </div>
         `;
     },
 
-        // Página de Configuración (placeholder)
-        config: async () => {
+    // Página de Configuración
+    config: async () => {
         // Cargar categorías antes de renderizar
         await WordsManager.loadCategories();
         
@@ -211,7 +211,7 @@ const Pages = {
         `;
     },
 
-    // Página de Gestión de Palabras (COMPLETA)
+    // Página de Gestión de Palabras
     words: () => {
         return `
             <div class="words-manager-page">
@@ -419,21 +419,34 @@ const Pages = {
         `;
     },
 
-
     // Página de Votación
     voting: () => {
         const gameData = App.gameData;
         
-        // Inicializar índice de votante si no existe
-        if (gameData.currentVoterIndex === undefined) {
-            gameData.currentVoterIndex = 0;
-        }
-        
         // IMPORTANTE: Solo jugadores ACTIVOS (no eliminados)
         const activePlayers = gameData.players.filter(p => !p.eliminated);
         
+        // Validar que haya jugadores activos
+        if (activePlayers.length === 0) {
+            console.error('❌ No hay jugadores activos');
+            return '<div style="text-align: center; padding: 100px; color: #ef4444;">Error: No hay jugadores activos</div>';
+        }
+        
+        // Inicializar o validar índice de votante
+        if (gameData.currentVoterIndex === undefined || gameData.currentVoterIndex >= activePlayers.length) {
+            gameData.currentVoterIndex = 0;
+        }
+        
         // El votante actual es del array de ACTIVOS
         const currentVoter = activePlayers[gameData.currentVoterIndex];
+        
+        // Validar que existe el votante actual
+        if (!currentVoter) {
+            console.error('❌ No se pudo obtener el votante actual');
+            console.log('currentVoterIndex:', gameData.currentVoterIndex);
+            console.log('activePlayers:', activePlayers);
+            return '<div style="text-align: center; padding: 100px; color: #ef4444;">Error: No se pudo obtener el votante actual</div>';
+        }
         
         // Helper para sanitizar nombres
         const sanitizeName = (name) => name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
@@ -638,5 +651,5 @@ const Pages = {
                 </div>
             </div>
         `;
-    },
-}
+    }
+};

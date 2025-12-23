@@ -9,24 +9,9 @@ const VotingUI = {
     // INICIALIZACIÓN
     // ============================================
 
+    // Inicialización
     init() {
         console.log('🗳️ Inicializando votación...');
-
-        // Si es una nueva ronda de votación, resetear TODO
-        if (App.gameData.newVotingRound) {
-            console.log('🔄 Nueva ronda de votación - Reseteando votos');
-            
-            // IMPORTANTE: Resetear votos de TODOS los jugadores (eliminados o no)
-            App.gameData.players.forEach(player => {
-                player.votes = 0;
-            });
-            
-            // Resetear índice de votante
-            App.gameData.currentVoterIndex = 0;
-            App.gameData.newVotingRound = false;
-            
-            console.log('✅ Votos reseteados:', App.gameData.players.map(p => `${p.name}: ${p.votes}`));
-        }
 
         // Inicializar índice de votante si no existe
         if (App.gameData.currentVoterIndex === undefined) {
@@ -134,7 +119,7 @@ const VotingUI = {
     // ============================================
     // NUEVA RONDA
     // ============================================
-
+    // Nueva Ronda
     startNewVotingRound() {
         console.log('🔄 Preparando nueva ronda de votación...');
         console.log('📊 Estado antes de resetear:', {
@@ -145,8 +130,20 @@ const VotingUI = {
             }))
         });
         
-        // Marcar que es una nueva ronda
-        App.gameData.newVotingRound = true;
+        // IMPORTANTE: Resetear ANTES de navegar para evitar mostrar votos antiguos
+        
+        // Resetear votos de TODOS los jugadores
+        App.gameData.players.forEach(player => {
+            player.votes = 0;
+        });
+        
+        // Resetear el índice
+        App.gameData.currentVoterIndex = 0;
+        
+        // Marcar que es una nueva ronda (ya no es necesario porque reseteamos arriba)
+        App.gameData.newVotingRound = false;
+        
+        console.log('✅ Votos reseteados:', App.gameData.players.map(p => `${p.name}: ${p.votes}`));
         
         // Volver a la página de votación
         App.navigateTo('voting');
@@ -155,76 +152,35 @@ const VotingUI = {
     // ============================================
     // REVANCHA Y MENÚ
     // ============================================
+// Revancha y Menú
+rematch() {
+    console.log('🔄 Iniciando revancha...');
 
-    rematch() {
-        console.log('🔄 Iniciando revancha...');
+    // Guardar configuración actual
+    const savedConfig = {
+        categoryId: App.gameData.category.id,
+        playerNames: App.gameData.players.map(p => p.name),
+        impostorCount: App.gameData.impostorCount,
+        revealMode: App.gameData.revealMode
+    };
 
-        // Guardar configuración actual
-        const savedConfig = {
-            categoryId: App.gameData.category.id,
-            playerNames: App.gameData.players.map(p => p.name),
-            impostorCount: App.gameData.impostorCount,
-            revealMode: App.gameData.revealMode
-        };
+    console.log('💾 Configuración guardada:', savedConfig);
 
-        console.log('💾 Configuración guardada:', savedConfig);
+    // Resetear gameData completamente
+    App.gameData = {
+        players: [],
+        category: null,
+        secretWord: null,
+        impostorCount: savedConfig.impostorCount,
+        revealMode: savedConfig.revealMode,
+        currentPlayerIndex: 0,
+        currentVoterIndex: 0
+    };
 
-        // Resetear gameData completamente
-        App.gameData = {
-            players: [],
-            category: null,
-            secretWord: null,
-            impostorCount: savedConfig.impostorCount,
-            revealMode: savedConfig.revealMode,
-            currentPlayerIndex: 0,
-            currentVoterIndex: 0
-        };
+    // IMPORTANTE: Guardar la config en App para que se restaure después del render
+    App.rematchConfig = savedConfig;
 
-        // Volver a configuración
-        App.navigateTo('config');
-
-        // Esperar a que se renderice y luego cargar datos
-        setTimeout(() => {
-            // Restaurar configuración en ConfigUI
-            ConfigUI.players = [...savedConfig.playerNames];
-            ConfigUI.impostorCount = savedConfig.impostorCount;
-            ConfigUI.revealMode = savedConfig.revealMode;
-            ConfigUI.selectedCategory = savedConfig.categoryId;
-
-            // Actualizar select de categoría
-            const categorySelect = document.getElementById('categorySelect');
-            if (categorySelect) {
-                categorySelect.value = savedConfig.categoryId;
-            }
-
-            // Actualizar radio de modo
-            const modeRadio = document.getElementById(
-                savedConfig.revealMode === 'visual' ? 'modeVisual' : 'modeSonoro'
-            );
-            if (modeRadio) {
-                modeRadio.checked = true;
-            }
-
-            // Actualizar las cards de modo visualmente
-            document.querySelectorAll('.mode-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            const selectedModeCard = document.querySelector(`.mode-${savedConfig.revealMode}`);
-            if (selectedModeCard) {
-                selectedModeCard.classList.add('selected');
-            }
-
-            // Actualizar contador de impostores
-            const impostorInput = document.getElementById('impostorCount');
-            if (impostorInput) {
-                impostorInput.value = savedConfig.impostorCount;
-            }
-
-            // Renderizar jugadores y UI completa
-            ConfigUI.renderPlayers();
-            ConfigUI.validateAndUpdate();
-            
-            console.log('✅ Configuración restaurada');
-        }, 100);
-    }
+    // Volver a configuración
+    App.navigateTo('config');
+}
 };
