@@ -266,6 +266,11 @@ body::before {
     }
 }
 
+/* ============================================
+   PÁGINA DE GESTIÓN DE PALABRAS
+   ============================================ */
+
+
 .words-manager-page {
     min-height: 100vh;
     padding: 20px;
@@ -375,32 +380,87 @@ body::before {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 600px;
     overflow-y: auto;
-    padding-right: 10px;
+    overflow-x: hidden;
+    padding-right: 15px;
+    flex: 1;
+    
+    /* Scroll behavior suave */
+    scroll-behavior: smooth;
 }
 
 /* Scrollbar personalizado */
 .categories-list::-webkit-scrollbar,
 .words-list::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
 }
 
 .categories-list::-webkit-scrollbar-track,
 .words-list::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
+    margin: 5px 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .categories-list::-webkit-scrollbar-thumb,
 .words-list::-webkit-scrollbar-thumb {
-    background: rgba(239, 68, 68, 0.5);
+    background: linear-gradient(180deg, #ef4444, #dc2626);
     border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
 }
 
 .categories-list::-webkit-scrollbar-thumb:hover,
 .words-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(239, 68, 68, 0.7);
+    background: linear-gradient(180deg, #f87171, #ef4444);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.categories-list::-webkit-scrollbar-thumb:active,
+.words-list::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #dc2626, #b91c1c);
+}
+
+/* Item de categoría */
+
+/* Scrollbar para Firefox */
+.categories-list,
+.words-list {
+    scrollbar-width: thin;
+    scrollbar-color: #ef4444 rgba(255, 255, 255, 0.05);
+}
+
+/* Indicador de scroll */
+.categories-list::before,
+.words-list::before {
+    content: '';
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(180deg, rgba(26, 10, 15, 0.8) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+    margin: -25px -25px 0 -25px;
+    border-radius: 20px 20px 0 0;
+}
+
+.categories-list::after,
+.words-list::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(0deg, rgba(26, 10, 15, 0.8) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+    margin: 0 -25px -25px -25px;
+    border-radius: 0 0 20px 20px;
 }
 
 /* Item de categoría */
@@ -414,16 +474,19 @@ body::before {
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 
 .category-item:hover {
     background: rgba(255, 255, 255, 0.08);
     transform: translateX(5px);
+    border-color: rgba(6, 182, 212, 0.3);
 }
 
 .category-item.active {
     background: rgba(239, 68, 68, 0.15);
     border-color: #ef4444;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
 }
 
 .category-info {
@@ -459,12 +522,15 @@ body::before {
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 
 .word-item:hover {
     background: rgba(255, 255, 255, 0.08);
     transform: translateX(5px);
+    border-color: rgba(6, 182, 212, 0.3);
 }
+
 
 .word-text {
     font-size: 1.05rem;
@@ -510,6 +576,19 @@ body::before {
 .empty-hint {
     font-size: 0.9rem;
     color: #666;
+}
+
+.list-counter {
+    position: sticky;
+    bottom: 0;
+    background: rgba(26, 10, 15, 0.95);
+    padding: 10px;
+    margin: 10px -15px -15px -15px;
+    border-radius: 0 0 10px 10px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ============================================
