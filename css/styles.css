@@ -1,5 +1,5 @@
 /* ============================================
-   ESTILOS GENERALES
+   ESTILOS GENERALES - FORZAR FONDO OSCURO
    ============================================ */
 * {
     margin: 0;
@@ -7,9 +7,14 @@
     box-sizing: border-box;
 }
 
+html {
+    background: #0a0a0a;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a1a 100%);
+    background-attachment: fixed; /* IMPORTANTE: Fija el fondo */
     min-height: 100vh;
     color: #ffffff;
     overflow-x: hidden;
@@ -34,6 +39,15 @@ body::before {
 #app {
     position: relative;
     z-index: 1;
+    background: transparent; /* AGREGAR */
+    min-height: 100vh;
+}
+@media (max-width: 768px) {
+    #app {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100);
+        background: transparent;
+    }
 }
 
 /* ============================================
@@ -2044,5 +2058,469 @@ grid-template-columns: 1fr;
     .btn-rematch,
     .btn-main-menu {
         width: 100%;
+    }
+}
+
+/* ============================================
+   OPTIMIZACIÓN MÓVIL - PANTALLAS COMPLETAS
+   ============================================ */
+
+/* Variables para altura dinámica en móviles */
+:root {
+    --vh: 1vh;
+}
+
+/* ============================================
+   PÁGINA DE REVELACIÓN - MÓVIL
+   ============================================ */
+
+@media (max-width: 768px) {
+    .reveal-page {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100);
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .reveal-page .container {
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0;
+    }
+
+    .reveal-progress {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        margin-bottom: 15px;
+        flex-shrink: 0;
+    }
+
+    .reveal-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    .player-turn-card {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+
+    .player-name-big {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .turn-instruction {
+        font-size: 0.95rem;
+    }
+
+    .reveal-button-container {
+        margin: 20px 0;
+    }
+
+    .btn-reveal {
+        width: 150px;
+        height: 150px;
+    }
+
+    .reveal-icon {
+        font-size: 2rem;
+    }
+
+    .reveal-text {
+        font-size: 0.85rem;
+    }
+
+    .role-card {
+        padding: 30px 20px;
+        margin: 15px 0;
+    }
+
+    .secret-word {
+        font-size: 2rem;
+        margin: 20px 0;
+        letter-spacing: 2px;
+    }
+
+    .role-title {
+        font-size: 1.3rem;
+    }
+
+    .impostor-title {
+        font-size: 1.5rem;
+    }
+
+    .role-icon {
+        font-size: 3rem;
+    }
+
+    .role-message {
+        font-size: 1rem;
+    }
+
+    .btn-next-player {
+        padding: 15px;
+        font-size: 1.1rem;
+        margin-top: 15px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Audio reveal móvil */
+    .audio-card {
+        padding: 30px 20px;
+        margin: 15px 0;
+    }
+
+    .audio-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+
+    .audio-status p {
+        font-size: 1rem;
+    }
+
+    .btn-replay {
+        margin-top: 20px;
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   PÁGINA DE VOTACIÓN - MÓVIL
+   ============================================ */
+
+@media (max-width: 768px) {
+    .voting-page {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100);
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    .voting-page .container {
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .voting-header {
+        padding: 15px 10px;
+        margin-bottom: 10px;
+        flex-shrink: 0;
+    }
+
+    .voting-progress {
+        margin-bottom: 15px;
+    }
+
+    .voting-title {
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+
+    .voter-name {
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+
+    .voting-instruction {
+        font-size: 1rem;
+    }
+
+    .players-voting-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 0 10px;
+        margin-bottom: 10px;
+        overflow-y: auto;
+        flex: 1;
+        max-height: calc(100vh - 280px);
+        max-height: calc(var(--vh, 1vh) * 100 - 280px);
+    }
+
+    .voting-player-card {
+        padding: 15px 10px;
+    }
+
+    .player-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+
+    .player-vote-name {
+        font-size: 0.95rem;
+    }
+
+    .vote-count {
+        font-size: 0.8rem;
+        padding: 3px 10px;
+        margin-top: 5px;
+    }
+
+    #confirmVoteContainer {
+        padding: 15px;
+    }
+
+    .confirm-text {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    .confirm-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-cancel-vote,
+    .btn-confirm-vote {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   PÁGINA DE RESULTADOS - MÓVIL
+   ============================================ */
+
+@media (max-width: 768px) {
+    .results-page {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100);
+        padding: 10px;
+        display: flex;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    .results-page .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .results-content {
+        max-width: 100%;
+    }
+
+    .results-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .eliminated-reveal {
+        margin-bottom: 20px;
+    }
+
+    .eliminated-card {
+        padding: 25px 20px;
+    }
+
+    .eliminated-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .eliminated-name {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .eliminated-votes {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .role-reveal {
+        padding-top: 20px;
+    }
+
+    .role-icon {
+        font-size: 3rem;
+    }
+
+    .impostor-icon,
+    .innocent-icon {
+        font-size: 3rem;
+    }
+
+    .role-result {
+        font-size: 1.3rem;
+        margin-top: 15px;
+    }
+
+    /* Resultado del juego */
+    .game-result {
+        margin-bottom: 20px;
+    }
+
+    .victory-card,
+    .continue-card {
+        padding: 30px 20px;
+    }
+
+    .victory-icon,
+    .continue-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .victory-title,
+    .continue-title {
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+    }
+
+    .victory-message,
+    .continue-message {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    .victory-details {
+        padding-top: 15px;
+    }
+
+    .victory-details p {
+        font-size: 0.95rem;
+        margin: 8px 0;
+    }
+
+    .remaining-info {
+        flex-direction: row;
+        gap: 20px;
+        margin-top: 15px;
+    }
+
+    .info-item {
+        flex: 1;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+    }
+
+    .info-value {
+        font-size: 1.5rem;
+    }
+
+    /* Botones de acción */
+    .results-actions {
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-next-round,
+    .btn-rematch,
+    .btn-main-menu {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+    }
+}
+
+/* ============================================
+   FIX PARA ALTURA REAL EN iOS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Prevenir scroll en páginas específicas */
+    body.no-scroll {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        /* AGREGAR: Mantener el fondo */
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a1a 100%);
+    }
+    
+    /* Asegurar que todas las páginas tengan fondo en móvil */
+    .reveal-page,
+    .voting-page,
+    .results-page {
+        background: transparent;
+    }
+}
+
+/* ============================================
+   FONDOS TRANSPARENTES EN TODAS LAS PÁGINAS
+   ============================================ */
+
+.reveal-page,
+.voting-page,
+.results-page,
+.config-page,
+.words-manager-page {
+    background: transparent !important;
+}
+
+.reveal-page .container,
+.voting-page .container,
+.results-page .container,
+.config-page .container,
+.words-manager-page .container {
+    background: transparent !important;
+}
+
+/* ============================================
+   FIX PARA MÓVIL - FONDO OSCURO FORZADO
+   ============================================ */
+
+@media (max-width: 768px) {
+    html {
+        background: #0a0a0a !important;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a1a 100%) !important;
+        background-attachment: fixed !important;
+    }
+    
+    body.no-scroll {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a1a 100%) !important;
+        background-attachment: fixed !important;
+    }
+    
+    #app {
+        background: transparent !important;
+    }
+    
+    /* Asegurar fondos transparentes en todas las páginas */
+    .reveal-page,
+    .voting-page,
+    .results-page,
+    .config-page,
+    .words-manager-page {
+        background: transparent !important;
     }
 }

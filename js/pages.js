@@ -53,7 +53,7 @@ const Pages = {
 
                 <!-- Footer -->
                 <div class="footer">
-                    <p>El Impostor v2.0 - By: Surgeron</p>
+                    <p>El Impostor v2.02 - By: Surgeron</p>
                     <p>Derechos Reservados: Carpincho Software 2025</p>
                 </div>
             </div>
