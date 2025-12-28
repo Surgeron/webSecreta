@@ -400,6 +400,8 @@ body::before {
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 15px;
+    padding-top: 5px; /* AGREGAR: espacio arriba */
+    padding-bottom: 5px; /* AGREGAR: espacio abajo */
     flex: 1;
     min-height: 0;
     /* Scroll behavior suave */
@@ -454,30 +456,34 @@ body::before {
 .words-list::before {
     content: '';
     position: sticky;
-    top: 0;
+    top: -5px; /* CAMBIAR: ajustar posición */
     left: 0;
     right: 0;
-    height: 20px;
-    background: linear-gradient(180deg, rgba(26, 10, 15, 0.8) 0%, transparent 100%);
+    height: 15px; /* REDUCIR altura */
+    background: linear-gradient(180deg, rgba(26, 10, 15, 0.9) 0%, transparent 100%);
     pointer-events: none;
     z-index: 1;
-    margin: -25px -25px 0 -25px;
+    margin: -5px -25px 0 -25px; /* AJUSTAR márgenes */
     border-radius: 20px 20px 0 0;
+    opacity: 0; /* OCULTAR por defecto */
+    transition: opacity 0.3s ease;
 }
 
 .categories-list::after,
 .words-list::after {
     content: '';
     position: sticky;
-    bottom: 0;
+    bottom: -5px; /* CAMBIAR: ajustar posición */
     left: 0;
     right: 0;
-    height: 20px;
-    background: linear-gradient(0deg, rgba(26, 10, 15, 0.8) 0%, transparent 100%);
+    height: 15px; /* REDUCIR altura */
+    background: linear-gradient(0deg, rgba(26, 10, 15, 0.9) 0%, transparent 100%);
     pointer-events: none;
     z-index: 1;
-    margin: 0 -25px -25px -25px;
+    margin: 0 -25px -5px -25px; /* AJUSTAR márgenes */
     border-radius: 0 0 20px 20px;
+    opacity: 0; /* OCULTAR por defecto */
+    transition: opacity 0.3s ease;
 }
 
 /* Item de categoría */
