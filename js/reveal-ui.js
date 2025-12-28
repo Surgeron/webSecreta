@@ -229,20 +229,24 @@ const RevealUI = {
         // Verificar si era el último jugador
         if (gameData.currentPlayerIndex >= gameData.players.length - 1) {
             console.log('✅ Último jugador - Ir a votación');
-            // Ir a votación
-            App.navigateTo('voting');
+            
+            // CAMBIO: Verificar modo de votación
+            if (gameData.votingMode === 'grupal') {
+                // Ir directamente a selección grupal
+                App.navigateTo('group_voting');
+            } else {
+                // Ir a votación individual
+                App.navigateTo('voting');
+            }
         } else {
             console.log(`🔄 Siguiente jugador (${gameData.currentPlayerIndex + 1} → ${gameData.currentPlayerIndex + 2})`);
-            // Pasar al siguiente jugador
             gameData.currentPlayerIndex++;
             
-            // IMPORTANTE: Resetear estado de revelación
             this.revealTimer = null;
             this.revealProgress = 0;
             this.isRevealed = false;
             this.currentUtterance = null;
             
-            // Re-renderizar la página
             App.render();
         }
     },

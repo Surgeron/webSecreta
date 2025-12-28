@@ -125,6 +125,32 @@ const Pages = {
                                 </div>
                             </div>
 
+                            <!-- Sección: Modo de Votación (NUEVA) -->
+                            <div class="form-section">
+                                <label class="form-label">
+                                    <span class="label-icon">🗳️</span>
+                                    Modo de Votación
+                                </label>
+                                <div class="reveal-modes">
+                                    <div class="mode-option" onclick="ConfigUI.selectVotingMode('individual')">
+                                        <input type="radio" name="votingMode" value="individual" id="modeIndividual" checked>
+                                        <label for="modeIndividual" class="mode-card mode-individual">
+                                            <span class="mode-icon">👤</span>
+                                            <span class="mode-title">Individual</span>
+                                            <span class="mode-description">Cada jugador vota por turno</span>
+                                        </label>
+                                    </div>
+                                    <div class="mode-option" onclick="ConfigUI.selectVotingMode('grupal')">
+                                        <input type="radio" name="votingMode" value="grupal" id="modeGrupal">
+                                        <label for="modeGrupal" class="mode-card mode-grupal">
+                                            <span class="mode-icon">👥</span>
+                                            <span class="mode-title">Grupal</span>
+                                            <span class="mode-description">Votación en tiempo real (IRL)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Sección: Cantidad de Impostores -->
                             <div class="form-section">
                                 <label class="form-label">
@@ -659,5 +685,54 @@ const Pages = {
                 </div>
             </div>
         `;
-    }
+    },
+
+    // Página de Votación Grupal (NUEVA)
+    group_voting: () => {
+        const gameData = App.gameData;
+        const activePlayers = gameData.players.filter(p => !p.eliminated);
+        
+        // Helper para sanitizar nombres
+        const sanitizeName = (name) => name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+
+        return `
+            <div class="group-voting-page">
+                <div class="container">
+                    <!-- Header -->
+                    <div class="group-voting-header">
+                        <h1 class="voting-title">🗳️ Votación Grupal</h1>
+                        <p class="voting-instruction">Discutan y seleccionen al jugador a eliminar</p>
+                    </div>
+
+                    <!-- Grid de jugadores -->
+                    <div class="group-players-grid">
+                        ${activePlayers.map((player) => {
+                            const sanitizedName = sanitizeName(player.name);
+                            
+                            return `
+                                <div class="group-player-card" 
+                                    onclick="GroupVotingUI.selectPlayer('${player.name}')"
+                                    id="player-${sanitizedName}">
+                                    <div class="player-avatar-large">${player.name.charAt(0).toUpperCase()}</div>
+                                    <div class="player-name-large">${player.name}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Botón de confirmar (oculto hasta seleccionar) -->
+                    <div id="confirmEliminationContainer" style="display: none;">
+                        <div class="elimination-confirmation">
+                            <p class="confirm-text-large">¿Eliminar a <span id="selectedPlayerName" class="selected-name-large"></span>?</p>
+                            <div class="confirm-buttons-large">
+                                <button class="btn-cancel-large" onclick="GroupVotingUI.cancelSelection()">Cancelar</button>
+                                <button class="btn-confirm-large" onclick="GroupVotingUI.confirmElimination()">✓ Confirmar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+    
 };

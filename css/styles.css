@@ -2533,3 +2533,343 @@ grid-template-columns: 1fr;
         background: transparent !important;
     }
 }
+
+/* ============================================
+   PÁGINA DE VOTACIÓN GRUPAL
+   ============================================ */
+
+.group-voting-page {
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.group-voting-page .container {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.group-voting-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px;
+}
+
+.group-voting-header .voting-title {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ef4444, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 15px;
+    animation: glowPulse 3s ease-in-out infinite;
+}
+
+.group-voting-header .voting-instruction {
+    font-size: 1.3rem;
+    color: #06b6d4;
+}
+
+/* Grid de jugadores */
+.group-players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+    padding: 20px;
+}
+
+.group-player-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.group-player-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(6, 182, 212, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.group-player-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    border-color: #06b6d4;
+    box-shadow: 0 20px 60px rgba(6, 182, 212, 0.4);
+}
+
+.group-player-card:hover::before {
+    opacity: 1;
+}
+
+.group-player-card.selected {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 20px 80px rgba(239, 68, 68, 0.6);
+    transform: translateY(-10px) scale(1.1);
+}
+
+.group-player-card.selected::before {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.3));
+    opacity: 1;
+}
+
+.player-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    font-weight: 900;
+    color: white;
+    margin: 0 auto 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.group-player-card:hover .player-avatar-large {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 15px 60px rgba(6, 182, 212, 0.6);
+}
+
+.group-player-card.selected .player-avatar-large {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: scale(1.15);
+    box-shadow: 0 15px 80px rgba(239, 68, 68, 0.8);
+}
+
+.player-name-large {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
+}
+
+/* Confirmación de eliminación */
+#confirmEliminationContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    padding: 40px;
+    box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.7);
+    animation: slideUp 0.4s ease;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.elimination-confirmation {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+.confirm-text-large {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.selected-name-large {
+    color: #ef4444;
+    font-weight: 900;
+    font-size: 2.2rem;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+}
+
+.confirm-buttons-large {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+}
+
+.btn-cancel-large,
+.btn-confirm-large {
+    padding: 20px 60px;
+    border-radius: 15px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.btn-cancel-large {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+.btn-cancel-large:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+.btn-confirm-large {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-confirm-large::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-confirm-large:hover::before {
+    left: 100%;
+}
+
+.btn-confirm-large:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 50px rgba(239, 68, 68, 0.6);
+}
+
+/* ============================================
+   RESPONSIVE - VOTACIÓN GRUPAL MÓVIL
+   ============================================ */
+
+@media (max-width: 768px) {
+    .group-voting-page {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100);
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    .group-voting-page .container {
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .group-voting-header {
+        padding: 15px 10px;
+        margin-bottom: 15px;
+        flex-shrink: 0;
+    }
+
+    .group-voting-header .voting-title {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .group-voting-header .voting-instruction {
+        font-size: 1rem;
+    }
+
+    .group-players-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 0 10px;
+        overflow-y: auto;
+        flex: 1;
+        max-height: calc(100vh - 200px);
+        max-height: calc(var(--vh, 1vh) * 100 - 200px);
+    }
+
+    .group-player-card {
+        padding: 25px 15px;
+    }
+
+    .player-avatar-large {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+
+    .player-name-large {
+        font-size: 1.1rem;
+    }
+
+    #confirmEliminationContainer {
+        padding: 20px 15px;
+    }
+
+    .confirm-text-large {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+
+    .selected-name-large {
+        font-size: 1.5rem;
+    }
+
+    .confirm-buttons-large {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn-cancel-large,
+    .btn-confirm-large {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        min-width: auto;
+    }
+}
+
+/* Animación adicional para cards */
+@keyframes cardPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(6, 182, 212, 0.6);
+    }
+}
+
+.group-player-card:hover {
+    animation: cardPulse 2s ease-in-out infinite;
+}
+
+/* Estilos específicos para cada modo de votación */
+.mode-individual.selected {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: #06b6d4;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.mode-grupal.selected {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: #06b6d4;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}

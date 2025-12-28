@@ -153,34 +153,35 @@ const VotingUI = {
     // REVANCHA Y MENÚ
     // ============================================
 // Revancha y Menú
-rematch() {
-    console.log('🔄 Iniciando revancha...');
+    rematch() {
+        console.log('🔄 Iniciando revancha...');
 
-    // Guardar configuración actual
-    const savedConfig = {
+        // Guardar configuración actual
+        const savedConfig = {
         categoryId: App.gameData.category.id,
         playerNames: App.gameData.players.map(p => p.name),
         impostorCount: App.gameData.impostorCount,
-        revealMode: App.gameData.revealMode
-    };
+        revealMode: App.gameData.revealMode,
+        votingMode: App.gameData.votingMode // AGREGAR
+        };
 
-    console.log('💾 Configuración guardada:', savedConfig);
+        console.log('💾 Configuración guardada:', savedConfig);
 
-    // Resetear gameData completamente
-    App.gameData = {
-        players: [],
-        category: null,
-        secretWord: null,
-        impostorCount: savedConfig.impostorCount,
-        revealMode: savedConfig.revealMode,
-        currentPlayerIndex: 0,
-        currentVoterIndex: 0
-    };
+        // Resetear gameData completamente
+        App.gameData = {
+            players: [],
+            category: null,
+            secretWord: null,
+            impostorCount: savedConfig.impostorCount,
+            revealMode: savedConfig.revealMode,
+            currentPlayerIndex: 0,
+            currentVoterIndex: 0
+        };
 
-    // IMPORTANTE: Guardar la config en App para que se restaure después del render
-    App.rematchConfig = savedConfig;
+        // IMPORTANTE: Guardar la config en App para que se restaure después del render
+        App.rematchConfig = savedConfig;
 
-    // Volver a configuración
-    App.navigateTo('config');
-}
+        // Volver a configuración
+        App.navigateTo('config');
+    }
 };

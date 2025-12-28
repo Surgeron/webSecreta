@@ -52,12 +52,13 @@ const App = {
     },
 
     // Ejecutar después de renderizar (para efectos dinámicos)
+    // Ejecutar después de renderizar (para efectos dinámicos)
     afterRender() {
         // Ajustar viewport height
         this.setViewportHeight();
         
         // Prevenir scroll en páginas específicas en móvil
-        const noScrollPages = ['reveal', 'voting'];
+        const noScrollPages = ['reveal', 'voting', 'group_voting']; // AGREGAR 'group_voting'
         if (window.innerWidth <= 768 && noScrollPages.includes(this.currentPage)) {
             document.body.classList.add('no-scroll');
         } else {
@@ -84,9 +85,14 @@ const App = {
             RevealUI.init();
         }
 
-        // Inicializar votación
+        // Inicializar votación individual
         if (this.currentPage === 'voting') {
             VotingUI.init();
+        }
+
+        // AGREGAR: Inicializar votación grupal
+        if (this.currentPage === 'group_voting') {
+            GroupVotingUI.init();
         }
     },
     
