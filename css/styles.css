@@ -2904,3 +2904,119 @@ grid-template-columns: 1fr;
     margin-bottom: 20px;
     animation: fadeInDown 0.3s ease;
 }
+
+/* ============================================
+   PÁGINA DE SELECCIÓN DE JUGADOR INICIAL - MÓVIL
+   ============================================ */
+
+@media (max-width: 768px) {
+    .start-player-page {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100);
+        padding: 10px;
+        display: flex;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    .start-player-page .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .start-player-content {
+        padding: 10px;
+    }
+
+    .round-indicator {
+        padding: 8px 20px;
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    .start-title {
+        font-size: 2rem;
+        margin-bottom: 25px;
+    }
+
+    .random-player-reveal {
+        margin-bottom: 25px;
+    }
+
+    .player-selected-card {
+        padding: 30px 20px;
+        margin-bottom: 0;
+    }
+
+    .selected-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .selected-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .selected-name {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .selected-message {
+        font-size: 1.1rem;
+    }
+
+    /* Instrucciones más compactas */
+    .start-instructions {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .instruction-card {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        text-align: left;
+    }
+
+    .instruction-icon {
+        font-size: 2rem;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .instruction-card p {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* Botones más compactos */
+    .start-actions {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .btn-reselect,
+    .btn-start-discussion {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .btn-reselect {
+        order: 2;
+    }
+
+    .btn-start-discussion {
+        order: 1;
+        font-size: 1.1rem;
+        padding: 15px 20px;
+    }
+}
+

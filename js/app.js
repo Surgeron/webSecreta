@@ -53,12 +53,13 @@ const App = {
 
     // Ejecutar después de renderizar (para efectos dinámicos)
     // Ejecutar después de renderizar (para efectos dinámicos)
+    // Ejecutar después de renderizar (para efectos dinámicos)
     afterRender() {
         // Ajustar viewport height
         this.setViewportHeight();
         
         // Prevenir scroll en páginas específicas en móvil
-        const noScrollPages = ['reveal', 'voting', 'startPlayer'];
+        const noScrollPages = ['reveal', 'voting']; // QUITAR 'startPlayer'
         if (window.innerWidth <= 768 && noScrollPages.includes(this.currentPage)) {
             document.body.classList.add('no-scroll');
         } else {
