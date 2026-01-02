@@ -1,186 +1,140 @@
 // ============================================
-// INTERFAZ DE VOTACIÓN
+// INTERFAZ DE VOTACIÓN SIMPLIFICADA
 // ============================================
 
 const VotingUI = {
-    selectedPlayer: null,
+    selectedPlayerForElimination: null,
 
-    // ============================================
-    // INICIALIZACIÓN
-    // ============================================
-
-    // Inicialización
     init() {
-        console.log('🗳️ Inicializando votación...');
-
-        // Inicializar índice de votante si no existe
-        if (App.gameData.currentVoterIndex === undefined) {
-            App.gameData.currentVoterIndex = 0;
+        console.log('🗳️ Inicializando votación simplificada...');
+        
+        // Inicializar número de ronda si no existe
+        if (!App.gameData.roundNumber) {
+            App.gameData.roundNumber = 1;
         }
-
-        console.log('Estado actual de votación:', {
-            currentVoterIndex: App.gameData.currentVoterIndex,
-            players: App.gameData.players.map(p => ({
-                name: p.name,
-                eliminated: p.eliminated || false,
-                votes: p.votes
-            }))
-        });
+        
+        console.log(`📍 Ronda ${App.gameData.roundNumber}`);
     },
 
-    // Función helper para sanitizar nombres (quitar espacios y caracteres especiales)
+    // Función helper para sanitizar nombres
     sanitizeName(name) {
         return name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
     },
 
-    // ============================================
-    // SELECCIÓN Y VOTACIÓN
-    // ============================================
-
-    selectPlayer(playerName) {
-        // Obtener solo jugadores ACTIVOS (no eliminados)
-        const activePlayers = App.gameData.players.filter(p => !p.eliminated);
+    selectPlayerForElimination(playerName) {
+        console.log(`👉 Jugador seleccionado para eliminación: ${playerName}`);
         
-        // El votante actual es el que está en el índice actual ENTRE LOS ACTIVOS
-        const currentVoter = activePlayers[App.gameData.currentVoterIndex];
-        
-        console.log(`🗳️ Seleccionando jugador: ${playerName}`);
-        console.log(`👤 Votante actual: ${currentVoter.name}`);
-        
-        // No puede votarse a sí mismo
-        if (playerName === currentVoter.name) {
-            alert('No puedes votarte a ti mismo');
-            return;
-        }
-
-        // Guardar selección
-        this.selectedPlayer = playerName;
+        this.selectedPlayerForElimination = playerName;
 
         // Resaltar jugador seleccionado
-        document.querySelectorAll('.voting-player-card').forEach(card => {
+        document.querySelectorAll('.elimination-player-card').forEach(card => {
             card.classList.remove('selected');
         });
         
-        const selectedCard = document.getElementById(`player-${this.sanitizeName(playerName)}`);
+        const selectedCard = document.getElementById(`elimination-player-${this.sanitizeName(playerName)}`);
         if (selectedCard) {
             selectedCard.classList.add('selected');
         }
 
         // Mostrar confirmación
-        document.getElementById('selectedPlayerName').textContent = playerName;
-        document.getElementById('confirmVoteContainer').style.display = 'block';
+        document.getElementById('eliminationPlayerName').textContent = playerName;
+        document.getElementById('eliminationConfirmContainer').style.display = 'block';
     },
 
-    cancelVote() {
-        this.selectedPlayer = null;
+    cancelElimination() {
+        this.selectedPlayerForElimination = null;
         
         // Remover selección visual
-        document.querySelectorAll('.voting-player-card').forEach(card => {
+        document.querySelectorAll('.elimination-player-card').forEach(card => {
             card.classList.remove('selected');
         });
 
         // Ocultar confirmación
-        document.getElementById('confirmVoteContainer').style.display = 'none';
+        document.getElementById('eliminationConfirmContainer').style.display = 'none';
     },
 
-    confirmVote() {
-        if (!this.selectedPlayer) return;
+    confirmElimination() {
+        if (!this.selectedPlayerForElimination) return;
 
-        const activePlayers = App.gameData.players.filter(p => !p.eliminated);
-        const currentVoter = activePlayers[App.gameData.currentVoterIndex];
+        console.log(`✅ Confirmada eliminación de: ${this.selectedPlayerForElimination}`);
 
-        // Encontrar al jugador votado en la lista COMPLETA (no solo activos)
-        const votedPlayer = App.gameData.players.find(p => p.name === this.selectedPlayer);
-        if (votedPlayer) {
-            votedPlayer.votes++;
+        // IMPORTANTE: Encontrar al jugador por nombre exacto
+        const eliminatedPlayer = App.gameData.players.find(p => p.name === this.selectedPlayerForElimination);
+        
+        if (!eliminatedPlayer) {
+            console.error('❌ No se encontró el jugador seleccionado:', this.selectedPlayerForElimination);
+            alert('Error: No se pudo encontrar al jugador seleccionado');
+            return;
         }
 
-        console.log(`✅ ${currentVoter.name} votó a ${this.selectedPlayer}`);
-        console.log(`📊 Votos actuales:`, App.gameData.players.filter(p => !p.eliminated).map(p => `${p.name}: ${p.votes}`));
+        // Limpiar cualquier flag anterior
+        App.gameData.players.forEach(p => {
+            p.justEliminated = false;
+        });
 
-        // Avanzar al siguiente votante
-        App.gameData.currentVoterIndex++;
+        // Marcar al jugador como eliminado
+        eliminatedPlayer.eliminated = true;
+        eliminatedPlayer.justEliminated = true; // Flag temporal para mostrar en resultados
+
+        console.log(`🎯 Jugador eliminado correctamente:`, {
+            nombre: eliminatedPlayer.name,
+            esImpostor: eliminatedPlayer.isImpostor,
+            eliminado: eliminatedPlayer.eliminated
+        });
 
         // Resetear selección
-        this.selectedPlayer = null;
+        this.selectedPlayerForElimination = null;
 
-        // Verificar si terminó la votación
-        if (App.gameData.currentVoterIndex >= activePlayers.length) {
-            console.log('🏁 Votación completada. Mostrando resultados...');
-            // Ir a resultados
-            App.navigateTo('results');
-        } else {
-            console.log(`➡️ Siguiente votante (${App.gameData.currentVoterIndex + 1}/${activePlayers.length})`);
-            // Siguiente votante
-            App.render();
-        }
+        // Ir a resultados
+        App.navigateTo('results');
     },
 
-    // ============================================
-    // NUEVA RONDA
-    // ============================================
-    // Nueva Ronda
-    startNewVotingRound() {
-        console.log('🔄 Preparando nueva ronda de votación...');
-        console.log('📊 Estado antes de resetear:', {
-            players: App.gameData.players.map(p => ({
-                name: p.name,
-                eliminated: p.eliminated || false,
-                votes: p.votes
-            }))
-        });
+    // Función para nueva ronda (desde resultados)
+    startNewRound() {
+        console.log('🔄 Iniciando nueva ronda de votación...');
         
-        // IMPORTANTE: Resetear ANTES de navegar para evitar mostrar votos antiguos
+        // Incrementar contador de rondas
+        App.gameData.roundNumber = (App.gameData.roundNumber || 1) + 1;
         
-        // Resetear votos de TODOS los jugadores
-        App.gameData.players.forEach(player => {
-            player.votes = 0;
-        });
+        // Resetear jugador inicial para nueva selección
+        App.gameData.selectedStartPlayer = null;
         
-        // Resetear el índice
-        App.gameData.currentVoterIndex = 0;
+        console.log(`📍 Ahora en ronda ${App.gameData.roundNumber}`);
         
-        // Marcar que es una nueva ronda (ya no es necesario porque reseteamos arriba)
-        App.gameData.newVotingRound = false;
-        
-        console.log('✅ Votos reseteados:', App.gameData.players.map(p => `${p.name}: ${p.votes}`));
-        
-        // Volver a la página de votación
-        App.navigateTo('voting');
+        // Ir a selección de jugador inicial
+        App.navigateTo('startPlayer');
     },
 
-    // ============================================
-    // REVANCHA Y MENÚ
-    // ============================================
-// Revancha y Menú
-rematch() {
-    console.log('🔄 Iniciando revancha...');
+    // Revancha
+    rematch() {
+        console.log('🔄 Iniciando revancha...');
 
-    // Guardar configuración actual
-    const savedConfig = {
-        categoryId: App.gameData.category.id,
-        playerNames: App.gameData.players.map(p => p.name),
-        impostorCount: App.gameData.impostorCount,
-        revealMode: App.gameData.revealMode
-    };
+        // Guardar configuración actual
+        const savedConfig = {
+            categoryId: App.gameData.category.id,
+            playerNames: App.gameData.players.map(p => p.name),
+            impostorCount: App.gameData.impostorCount,
+            revealMode: App.gameData.revealMode
+        };
 
-    console.log('💾 Configuración guardada:', savedConfig);
+        console.log('💾 Configuración guardada:', savedConfig);
 
-    // Resetear gameData completamente
-    App.gameData = {
-        players: [],
-        category: null,
-        secretWord: null,
-        impostorCount: savedConfig.impostorCount,
-        revealMode: savedConfig.revealMode,
-        currentPlayerIndex: 0,
-        currentVoterIndex: 0
-    };
+        // Resetear gameData completamente
+        App.gameData = {
+            players: [],
+            category: null,
+            secretWord: null,
+            impostorCount: savedConfig.impostorCount,
+            revealMode: savedConfig.revealMode,
+            currentPlayerIndex: 0,
+            selectedStartPlayer: null,
+            roundNumber: 1
+        };
 
-    // IMPORTANTE: Guardar la config en App para que se restaure después del render
-    App.rematchConfig = savedConfig;
+        // Guardar config para restaurar
+        App.rematchConfig = savedConfig;
 
-    // Volver a configuración
-    App.navigateTo('config');
-}
+        // Volver a configuración
+        App.navigateTo('config');
+    }
 };

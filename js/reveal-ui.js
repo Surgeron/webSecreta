@@ -228,15 +228,15 @@ const RevealUI = {
         
         // Verificar si era el último jugador
         if (gameData.currentPlayerIndex >= gameData.players.length - 1) {
-            console.log('✅ Último jugador - Ir a votación');
-            // Ir a votación
-            App.navigateTo('voting');
+            console.log('✅ Último jugador - Ir a selección de jugador inicial');
+            // Ir a selección de jugador inicial en lugar de votación directa
+            App.navigateTo('startPlayer');
         } else {
             console.log(`🔄 Siguiente jugador (${gameData.currentPlayerIndex + 1} → ${gameData.currentPlayerIndex + 2})`);
             // Pasar al siguiente jugador
             gameData.currentPlayerIndex++;
             
-            // IMPORTANTE: Resetear estado de revelación
+            // Resetear estado de revelación
             this.revealTimer = null;
             this.revealProgress = 0;
             this.isRevealed = false;
