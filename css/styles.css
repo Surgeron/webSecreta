@@ -2877,9 +2877,11 @@ grid-template-columns: 1fr;
     }
 
     .players-elimination-grid {
-        grid-template-columns: 1fr; 
-        gap: 15px; /* Espacio entre los elementos de la lista */
-        padding: 0 15px;
+        display: flex;
+        flex-direction: column;
+        max-height: 500px; /* Altura máxima del contenedor */
+        overflow-y: auto; /* Scroll vertical */
+        padding-right: 10px; /* Espacio para la barra de scroll */
     }
 
     .elimination-player-card {
