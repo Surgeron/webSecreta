@@ -2877,9 +2877,24 @@ grid-template-columns: 1fr;
     }
 
     .players-elimination-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        grid-template-columns: 1fr; 
+        gap: 15px; /* Espacio entre los elementos de la lista */
+        padding: 0 15px;
     }
+
+    .elimination-player-card {
+        /* Ajustamos el padding para que no sea tan alto */
+        padding: 15px 20px;
+        
+        /* Opcional: Si quieres que el contenido se vea como fila (avatar a la izquierda, texto a la derecha) */
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 20px;
+    }
+
+
 
     .elimination-buttons {
         flex-direction: column;

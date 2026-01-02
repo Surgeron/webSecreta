@@ -439,7 +439,6 @@ const Pages = {
                 <div class="container">
                     <div class="voting-header">
                         <h1 class="voting-title">Votación</h1>
-                        <p class="voting-instruction">Selecciona al jugador eliminado por votación</p>
                         <div class="players-remaining">
                             <span class="remaining-icon">👥</span>
                             <span class="remaining-text">${activePlayers.length} jugadores restantes</span>
