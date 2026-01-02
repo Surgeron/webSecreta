@@ -345,14 +345,15 @@ const ConfigUI = {
 
         // IMPORTANTE: Guardar configuración COMPLETA en App
         App.gameData = {
-            category: WordsManager.categories.find(c => c.id === finalCategory),
-            secretWord: secretWord,
-            players: playersWithRoles,
-            revealMode: this.revealMode,
-            impostorCount: this.impostorCount,
-            currentPlayerIndex: 0, // Resetear índice
-            currentVoterIndex: 0    // Resetear índice de votación
-        };
+        category: WordsManager.categories.find(c => c.id === finalCategory),
+        secretWord: secretWord,
+        players: playersWithRoles,
+        revealMode: this.revealMode,
+        impostorCount: this.impostorCount,
+        currentPlayerIndex: 0,
+        selectedStartPlayer: null,
+        roundNumber: 1 // AGREGAR: Inicializar contador de rondas
+    };
 
         console.log('🎮 Juego iniciado:', App.gameData);
 

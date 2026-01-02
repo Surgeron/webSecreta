@@ -53,7 +53,7 @@ const Pages = {
 
                 <!-- Footer -->
                 <div class="footer">
-                    <p>El Impostor v2.0 - By: Surgeron</p>
+                    <p>El Impostor v2.03 - By: Surgeron</p>
                     <p>Derechos Reservados: Carpincho Software 2025</p>
                 </div>
             </div>
@@ -427,83 +427,55 @@ const Pages = {
         `;
     },
 
-    // Página de Votación
+    // Página de Votación Simplificada
     voting: () => {
         const gameData = App.gameData;
         
-        // IMPORTANTE: Solo jugadores ACTIVOS (no eliminados)
+        // Solo jugadores activos
         const activePlayers = gameData.players.filter(p => !p.eliminated);
-        
-        // Validar que haya jugadores activos
-        if (activePlayers.length === 0) {
-            console.error('❌ No hay jugadores activos');
-            return '<div style="text-align: center; padding: 100px; color: #ef4444;">Error: No hay jugadores activos</div>';
-        }
-        
-        // Inicializar o validar índice de votante
-        if (gameData.currentVoterIndex === undefined || gameData.currentVoterIndex >= activePlayers.length) {
-            gameData.currentVoterIndex = 0;
-        }
-        
-        // El votante actual es del array de ACTIVOS
-        const currentVoter = activePlayers[gameData.currentVoterIndex];
-        
-        // Validar que existe el votante actual
-        if (!currentVoter) {
-            console.error('❌ No se pudo obtener el votante actual');
-            console.log('currentVoterIndex:', gameData.currentVoterIndex);
-            console.log('activePlayers:', activePlayers);
-            return '<div style="text-align: center; padding: 100px; color: #ef4444;">Error: No se pudo obtener el votante actual</div>';
-        }
-        
-        // Helper para sanitizar nombres
-        const sanitizeName = (name) => name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
 
         return `
-            <div class="voting-page">
+            <div class="voting-page voting-simplified">
                 <div class="container">
-                    <!-- Header de votación -->
                     <div class="voting-header">
-                        <div class="voting-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${(gameData.currentVoterIndex / activePlayers.length) * 100}%"></div>
-                            </div>
-                            <div class="progress-text">
-                                Voto ${gameData.currentVoterIndex + 1} de ${activePlayers.length}
-                            </div>
+                        <h1 class="voting-title">Votación</h1>
+                        <p class="voting-instruction">Selecciona al jugador eliminado por votación</p>
+                        <div class="players-remaining">
+                            <span class="remaining-icon">👥</span>
+                            <span class="remaining-text">${activePlayers.length} jugadores restantes</span>
                         </div>
-
-                        <h1 class="voting-title">Turno de Votar</h1>
-                        <h2 class="voter-name">${currentVoter.name}</h2>
-                        <p class="voting-instruction">Selecciona a quién crees que es el impostor</p>
                     </div>
 
-                    <!-- Lista de jugadores para votar (SOLO ACTIVOS) -->
-                    <div class="players-voting-grid">
-                        ${activePlayers.map((player, index) => {
-                            const isCurrentVoter = player.name === currentVoter.name;
+                    <div class="players-elimination-grid">
+                        ${activePlayers.map((player) => {
+                            const sanitizeName = (name) => name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
                             const sanitizedName = sanitizeName(player.name);
                             
                             return `
-                                <div class="voting-player-card ${isCurrentVoter ? 'current-voter' : ''}" 
-                                    onclick="${isCurrentVoter ? '' : "VotingUI.selectPlayer('" + player.name + "')"}"
-                                    id="player-${sanitizedName}">
-                                    <div class="player-avatar">${player.name.charAt(0).toUpperCase()}</div>
-                                    <div class="player-vote-name">${player.name}</div>
-                                    ${player.votes > 0 ? `<div class="vote-count">${player.votes} 🗳️</div>` : ''}
-                                    ${isCurrentVoter ? '<div class="current-voter-badge">Tú</div>' : ''}
+                                <div class="elimination-player-card" 
+                                    onclick="VotingUI.selectPlayerForElimination('${player.name}')"
+                                    id="elimination-player-${sanitizedName}">
+                                    <div class="elimination-avatar">${player.name.charAt(0).toUpperCase()}</div>
+                                    <div class="elimination-player-name">${player.name}</div>
+                                    <div class="elimination-icon">❌</div>
                                 </div>
                             `;
                         }).join('')}
                     </div>
 
-                    <!-- Botón de confirmar voto (oculto hasta seleccionar) -->
-                    <div id="confirmVoteContainer" style="display: none;">
-                        <div class="vote-confirmation">
-                            <p class="confirm-text">¿Votar a <span id="selectedPlayerName" class="selected-name"></span>?</p>
-                            <div class="confirm-buttons">
-                                <button class="btn-cancel-vote" onclick="VotingUI.cancelVote()">Cancelar</button>
-                                <button class="btn-confirm-vote" onclick="VotingUI.confirmVote()">✓ Confirmar Voto</button>
+                    <!-- Confirmación de eliminación -->
+                    <div id="eliminationConfirmContainer" style="display: none;">
+                        <div class="elimination-confirmation">
+                            <p class="elimination-confirm-text">
+                                ¿Eliminar a <span id="eliminationPlayerName" class="elimination-name"></span>?
+                            </p>
+                            <div class="elimination-buttons">
+                                <button class="btn-cancel-elimination" onclick="VotingUI.cancelElimination()">
+                                    Cancelar
+                                </button>
+                                <button class="btn-confirm-elimination" onclick="VotingUI.confirmElimination()">
+                                    ✓ Confirmar Eliminación
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -516,27 +488,17 @@ const Pages = {
     results: () => {
         const gameData = App.gameData;
         
-        // IMPORTANTE: Solo jugadores ACTIVOS (no eliminados)
-        const activePlayers = gameData.players.filter(p => !p.eliminated);
+        // IMPORTANTE: Obtener el jugador que fue marcado como eliminado en la votación
+        // No recalcular aquí, usar el que ya fue seleccionado
+        const eliminatedPlayer = gameData.players.find(p => p.justEliminated);
         
-        console.log('📊 Calculando resultados...');
-        console.log('Jugadores activos:', activePlayers.map(p => `${p.name}: ${p.votes} votos`));
-        
-        // Calcular jugador más votado
-        const maxVotes = Math.max(...activePlayers.map(p => p.votes));
-        const playersWithMaxVotes = activePlayers.filter(p => p.votes === maxVotes);
-        
-        console.log(`🎯 Máximo de votos: ${maxVotes}`);
-        console.log(`👥 Jugadores con más votos:`, playersWithMaxVotes.map(p => p.name));
-        
-        // Si hay empate, elegir uno al azar
-        const eliminatedPlayer = playersWithMaxVotes[Math.floor(Math.random() * playersWithMaxVotes.length)];
-        
-        // Marcar como eliminado
-        if (!eliminatedPlayer.eliminated) {
-            eliminatedPlayer.eliminated = true;
-            console.log(`❌ ${eliminatedPlayer.name} ha sido eliminado`);
+        if (!eliminatedPlayer) {
+            console.error('❌ No se encontró jugador eliminado');
+            return '<div style="text-align: center; padding: 100px; color: #ef4444;">Error: No se encontró jugador eliminado</div>';
         }
+        
+        // Limpiar el flag temporal
+        eliminatedPlayer.justEliminated = false;
         
         // Verificar condiciones de victoria/derrota
         const remainingPlayers = gameData.players.filter(p => !p.eliminated);
@@ -547,6 +509,7 @@ const Pages = {
         console.log(`   Jugadores restantes: ${remainingPlayers.length}`);
         console.log(`   Impostores restantes: ${remainingImpostors}`);
         console.log(`   Inocentes restantes: ${remainingInnocents}`);
+        console.log(`   Eliminado: ${eliminatedPlayer.name} (${eliminatedPlayer.isImpostor ? 'IMPOSTOR' : 'Inocente'})`);
         
         let gameStatus = 'continue';
         
@@ -573,7 +536,6 @@ const Pages = {
                             <div class="eliminated-card ${eliminatedPlayer.isImpostor ? 'was-impostor' : 'was-innocent'}">
                                 <div class="eliminated-avatar">${eliminatedPlayer.name.charAt(0).toUpperCase()}</div>
                                 <h2 class="eliminated-name">${eliminatedPlayer.name}</h2>
-                                <div class="eliminated-votes">${eliminatedPlayer.votes} votos</div>
                                 
                                 <div class="role-reveal">
                                     ${eliminatedPlayer.isImpostor 
@@ -601,6 +563,7 @@ const Pages = {
                                     <div class="victory-details">
                                         <p>Palabra secreta: <strong>${gameData.secretWord}</strong></p>
                                         <p>Categoría: ${gameData.category.name}</p>
+                                        <p>Rondas jugadas: <strong>${gameData.roundNumber || 1}</strong></p>
                                     </div>
                                 </div>
                                 `
@@ -614,6 +577,7 @@ const Pages = {
                                         <p>Impostores restantes: <strong>${remainingImpostors}</strong></p>
                                         <p>Jugadores restantes: <strong>${remainingInnocents}</strong></p>
                                         <p>Palabra secreta era: <strong>${gameData.secretWord}</strong></p>
+                                        <p>Rondas jugadas: <strong>${gameData.roundNumber || 1}</strong></p>
                                     </div>
                                 </div>
                                 `
@@ -631,6 +595,10 @@ const Pages = {
                                             <span class="info-label">Impostores restantes:</span>
                                             <span class="info-value">${remainingImpostors}</span>
                                         </div>
+                                        <div class="info-item">
+                                            <span class="info-label">Ronda:</span>
+                                            <span class="info-value">${gameData.roundNumber || 1}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 `
@@ -641,7 +609,7 @@ const Pages = {
                         <div class="results-actions">
                             ${gameStatus === 'continue'
                                 ? `
-                                <button class="btn-next-round" onclick="VotingUI.startNewVotingRound()">
+                                <button class="btn-next-round" onclick="VotingUI.startNewRound()">
                                     ➡️ Nueva Ronda de Votación
                                 </button>
                                 `
@@ -659,5 +627,65 @@ const Pages = {
                 </div>
             </div>
         `;
-    }
+    },
+
+   // Página de Selección de Jugador Inicial
+    startPlayer: () => {
+        const gameData = App.gameData;
+        
+        // Seleccionar jugador aleatorio si no está seleccionado
+        if (!gameData.selectedStartPlayer) {
+            const activePlayers = gameData.players.filter(p => !p.eliminated);
+            const randomPlayer = activePlayers[Math.floor(Math.random() * activePlayers.length)];
+            gameData.selectedStartPlayer = randomPlayer;
+        }
+
+        const currentRound = gameData.roundNumber || 1;
+
+        return `
+            <div class="start-player-page">
+                <div class="container">
+                    <div class="start-player-content">
+                        ${currentRound > 1 ? `<div class="round-indicator">Ronda ${currentRound}</div>` : ''}
+                        
+                        <h1 class="start-title">¿Quién empieza?</h1>
+                        
+                        <div class="random-player-reveal">
+                            <div class="player-selected-card">
+                                <div class="selected-icon">🎲</div>
+                                <div class="selected-avatar">${gameData.selectedStartPlayer.name.charAt(0).toUpperCase()}</div>
+                                <h2 class="selected-name">${gameData.selectedStartPlayer.name}</h2>
+                                <p class="selected-message">¡Empieza dando una pista!</p>
+                            </div>
+                        </div>
+
+                        <div class="start-instructions">
+                            <div class="instruction-card">
+                                <div class="instruction-icon">💬</div>
+                                <p>Cada jugador da una pista sobre la palabra (o finge conocerla)</p>
+                            </div>
+                            <div class="instruction-card">
+                                <div class="instruction-icon">🤔</div>
+                                <p>Discutan entre todos para encontrar al impostor</p>
+                            </div>
+                            <div class="instruction-card">
+                                <div class="instruction-icon">🗳️</div>
+                                <p>Voten al jugador más sospechoso</p>
+                            </div>
+                        </div>
+
+                        <div class="start-actions">
+                            <button class="btn-reselect" onclick="StartPlayerUI.reselectPlayer()">
+                                🔄 Elegir otro jugador
+                            </button>
+                            <button class="btn-start-discussion" onclick="StartPlayerUI.startDiscussion()">
+                                ✅ Empezar ${currentRound > 1 ? 'Ronda' : 'Discusión'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
 };

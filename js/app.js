@@ -52,7 +52,19 @@ const App = {
     },
 
     // Ejecutar después de renderizar (para efectos dinámicos)
+    // Ejecutar después de renderizar (para efectos dinámicos)
     afterRender() {
+        // Ajustar viewport height
+        this.setViewportHeight();
+        
+        // Prevenir scroll en páginas específicas en móvil
+        const noScrollPages = ['reveal', 'voting', 'startPlayer'];
+        if (window.innerWidth <= 768 && noScrollPages.includes(this.currentPage)) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+        
         // Efecto de paralaje con el mouse (solo en página de inicio)
         if (this.currentPage === 'home') {
             this.initParallaxEffect();
@@ -72,12 +84,18 @@ const App = {
         if (this.currentPage === 'reveal') {
             RevealUI.init();
         }
+
+        // Inicializar selección de jugador inicial
+        if (this.currentPage === 'startPlayer') {
+            StartPlayerUI.init();
+        }
+
         // Inicializar votación
         if (this.currentPage === 'voting') {
-        VotingUI.init();
+            VotingUI.init();
         }
     },
-
+        
     // Efecto de paralaje en las cards
     initParallaxEffect() {
         const handleMouseMove = (e) => {
@@ -96,10 +114,29 @@ const App = {
         document.addEventListener('mousemove', handleMouseMove);
     },
 
+
+    // Ajustar altura del viewport en móviles (especialmente iOS)
+    setViewportHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    },
+
     // Inicializar listeners globales
     initEventListeners() {
-        // Aquí irán eventos globales si son necesarios
-    },
+        // Ajustar altura del viewport
+        this.setViewportHeight();
+        
+        // Re-calcular al cambiar orientación o resize
+        window.addEventListener('resize', () => {
+            this.setViewportHeight();
+        });
+        
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                this.setViewportHeight();
+            }, 100);
+        });
+    }
 
 
 };
