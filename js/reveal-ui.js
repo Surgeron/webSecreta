@@ -233,7 +233,6 @@ const RevealUI = {
             App.navigateTo('startPlayer');
         } else {
             console.log(`🔄 Siguiente jugador (${gameData.currentPlayerIndex + 1} → ${gameData.currentPlayerIndex + 2})`);
-            // Pasar al siguiente jugador
             gameData.currentPlayerIndex++;
             
             // Resetear estado de revelación
@@ -242,7 +241,6 @@ const RevealUI = {
             this.isRevealed = false;
             this.currentUtterance = null;
             
-            // Re-renderizar la página
             App.render();
         }
     },

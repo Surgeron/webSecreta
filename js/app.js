@@ -94,6 +94,11 @@ const App = {
         if (this.currentPage === 'voting') {
             VotingUI.init();
         }
+
+        // AGREGAR: Inicializar votación grupal
+        if (this.currentPage === 'group_voting') {
+            GroupVotingUI.init();
+        }
     },
         
     // Efecto de paralaje en las cards

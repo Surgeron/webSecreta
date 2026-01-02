@@ -125,6 +125,32 @@ const Pages = {
                                 </div>
                             </div>
 
+                            <!-- Sección: Modo de Votación (NUEVA) -->
+                            <div class="form-section">
+                                <label class="form-label">
+                                    <span class="label-icon">🗳️</span>
+                                    Modo de Votación
+                                </label>
+                                <div class="reveal-modes">
+                                    <div class="mode-option" onclick="ConfigUI.selectVotingMode('individual')">
+                                        <input type="radio" name="votingMode" value="individual" id="modeIndividual" checked>
+                                        <label for="modeIndividual" class="mode-card mode-individual">
+                                            <span class="mode-icon">👤</span>
+                                            <span class="mode-title">Individual</span>
+                                            <span class="mode-description">Cada jugador vota por turno</span>
+                                        </label>
+                                    </div>
+                                    <div class="mode-option" onclick="ConfigUI.selectVotingMode('grupal')">
+                                        <input type="radio" name="votingMode" value="grupal" id="modeGrupal">
+                                        <label for="modeGrupal" class="mode-card mode-grupal">
+                                            <span class="mode-icon">👥</span>
+                                            <span class="mode-title">Grupal</span>
+                                            <span class="mode-description">Votación en tiempo real (IRL)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Sección: Cantidad de Impostores -->
                             <div class="form-section">
                                 <label class="form-label">
