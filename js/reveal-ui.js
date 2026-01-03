@@ -120,10 +120,9 @@ const RevealUI = {
             visualReveal.classList.add('revealed');
         }, 100);
     },
-
-    // ============================================
-    // REVELACIÓN SONORA (TTS)
-    // ============================================
+// ============================================
+// REVELACIÓN SONORA (TTS con ResponsiveVoice)
+// ============================================
 
     revealAudio() {
         const audioReveal = document.getElementById('audioReveal');
@@ -135,62 +134,78 @@ const RevealUI = {
         // Preparar el texto a reproducir
         let textToSpeak;
         if (currentPlayer.isImpostor) {
-            textToSpeak = 'Eres el impostor. Repito, Eres el impostor.';
+            textToSpeak = 'Eres el impostor. Repito. Eres el impostor. Repito.';
         } else {
+            // Para palabras: decir naturalmente
             textToSpeak = `La palabra secreta es: ${gameData.secretWord}. Repito: ${gameData.secretWord}.`;
         }
 
-        // Reproducir con Text-to-Speech
-        this.speakText(textToSpeak);
+        // Reproducir con ResponsiveVoice
+        this.speakTextResponsive(textToSpeak);
     },
 
-    speakText(text) {
-        // Cancelar cualquier audio anterior
-        if (this.currentUtterance) {
-            window.speechSynthesis.cancel();
+    speakTextResponsive(text) {
+        // Detener cualquier audio anterior
+        if (typeof responsiveVoice !== 'undefined') {
+            responsiveVoice.cancel();
         }
 
-        // Crear utterance
-        this.currentUtterance = new SpeechSynthesisUtterance(text);
-        
-        // Configurar voz en español
-        const voices = window.speechSynthesis.getVoices();
-        const spanishVoice = voices.find(voice => voice.lang.startsWith('es'));
-        if (spanishVoice) {
-            this.currentUtterance.voice = spanishVoice;
-        }
-        
-        // Configuración de voz
-        this.currentUtterance.lang = 'es-ES';
-        this.currentUtterance.rate = 0.9; // Velocidad (0.9 = un poco más lento)
-        this.currentUtterance.pitch = 1.0; // Tono
-        this.currentUtterance.volume = 1.0; // Volumen
+        const statusElement = document.getElementById('audioStatus');
+        const btnReplay = document.getElementById('btnReplay');
+        const audioWave = document.querySelector('.audio-wave');
 
-        // Eventos
-        this.currentUtterance.onstart = () => {
+        // Callback cuando empieza
+        const onStart = () => {
             console.log('🔊 Reproduciendo audio...');
-            document.getElementById('audioStatus').querySelector('p').textContent = 'Reproduciendo audio...';
+            if (statusElement) {
+                statusElement.querySelector('p').textContent = 'Reproduciendo audio...';
+            }
+            if (audioWave) {
+                audioWave.style.display = 'flex';
+            }
         };
 
-        this.currentUtterance.onend = () => {
+        // Callback cuando termina
+        const onEnd = () => {
             console.log('✅ Audio finalizado');
-            document.getElementById('audioStatus').querySelector('p').textContent = 'Audio finalizado';
-            
-            // Mostrar botón de replay
-            const btnReplay = document.getElementById('btnReplay');
-            btnReplay.style.display = 'block';
-            
-            // Ocultar animación de onda
-            document.querySelector('.audio-wave').style.display = 'none';
+            if (statusElement) {
+                statusElement.querySelector('p').textContent = 'Audio finalizado';
+            }
+            if (btnReplay) {
+                btnReplay.style.display = 'block';
+            }
+            if (audioWave) {
+                audioWave.style.display = 'none';
+            }
         };
 
-        this.currentUtterance.onerror = (error) => {
-            console.error('❌ Error en TTS:', error);
-            document.getElementById('audioStatus').querySelector('p').textContent = 'Error al reproducir audio';
+        // Parámetros de voz
+        const voiceParams = {
+            pitch: 1,           // Tono normal
+            rate: 0.9,          // Velocidad un poco más lenta
+            volume: 1,          // Volumen máximo
+            onstart: onStart,
+            onend: onEnd,
+            onerror: (error) => {
+                console.error('❌ Error en TTS:', error);
+                if (statusElement) {
+                    statusElement.querySelector('p').textContent = 'Error al reproducir audio';
+                }
+            }
         };
 
-        // Reproducir
-        window.speechSynthesis.speak(this.currentUtterance);
+        // Reproducir con voz en español
+        // Opciones de voces en español:
+        // - 'Spanish Latin American Female' (Latinoamericano)
+        // - 'Spanish Female' (España)
+        // - 'Spanish Male' (España)
+        
+        if (typeof responsiveVoice !== 'undefined') {
+            responsiveVoice.speak(text, 'Spanish Latin American Female', voiceParams);
+        } else {
+            console.error('❌ ResponsiveVoice no está disponible');
+            alert('Error: Sistema de audio no disponible');
+        }
     },
 
     replayAudio() {
@@ -206,12 +221,55 @@ const RevealUI = {
         }
 
         // Mostrar animación de onda de nuevo
-        document.querySelector('.audio-wave').style.display = 'flex';
+        const audioWave = document.querySelector('.audio-wave');
+        if (audioWave) {
+            audioWave.style.display = 'flex';
+        }
+        
+        // Ocultar botón de replay mientras reproduce
+        const btnReplay = document.getElementById('btnReplay');
+        if (btnReplay) {
+            btnReplay.style.display = 'none';
+        }
         
         // Reproducir de nuevo
-        this.speakText(textToSpeak);
+        this.speakTextResponsive(textToSpeak);
     },
 
+    // Actualizar también nextPlayer para detener audio
+    nextPlayer() {
+        console.log('➡️ Pasando al siguiente jugador...');
+        
+        // Detener cualquier audio en reproducción (ResponsiveVoice)
+        if (typeof responsiveVoice !== 'undefined' && responsiveVoice.isPlaying()) {
+            responsiveVoice.cancel();
+        }
+        
+        // También detener Web Speech API por si acaso
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+
+        const gameData = App.gameData;
+        
+        // Verificar si era el último jugador
+        if (gameData.currentPlayerIndex >= gameData.players.length - 1) {
+            console.log('✅ Último jugador - Ir a selección de jugador inicial');
+            App.navigateTo('startPlayer');
+        } else {
+            console.log(`🔄 Siguiente jugador (${gameData.currentPlayerIndex + 1} → ${gameData.currentPlayerIndex + 2})`);
+            gameData.currentPlayerIndex++;
+            
+            // Resetear estado de revelación
+            this.revealTimer = null;
+            this.revealProgress = 0;
+            this.isRevealed = false;
+            this.currentUtterance = null;
+            
+            // Re-renderizar la página
+            App.render();
+        }
+    },
     // ============================================
     // NAVEGACIÓN
     // ============================================
@@ -254,26 +312,19 @@ const RevealUI = {
     init() {
         console.log('🎭 Inicializando revelación...');
         
-        // IMPORTANTE: Resetear todo el estado
+        // Resetear todo el estado
         this.revealTimer = null;
         this.revealProgress = 0;
         this.isRevealed = false;
         this.currentUtterance = null;
         
-        // Detener cualquier audio previo
-        if (window.speechSynthesis) {
-            window.speechSynthesis.cancel();
+        // Detener cualquier audio previo (ambos sistemas)
+        if (typeof responsiveVoice !== 'undefined' && responsiveVoice.isPlaying()) {
+            responsiveVoice.cancel();
         }
         
-        // Cargar voces disponibles
         if (window.speechSynthesis) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                const voices = window.speechSynthesis.getVoices();
-                console.log('🔊 Voces disponibles:', voices.length);
-                
-                const spanishVoices = voices.filter(v => v.lang.startsWith('es'));
-                console.log('🇪🇸 Voces en español:', spanishVoices.length);
-            };
+            window.speechSynthesis.cancel();
         }
         
         console.log('✅ RevealUI inicializado correctamente');

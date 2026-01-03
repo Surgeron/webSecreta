@@ -488,7 +488,6 @@ const Pages = {
         const gameData = App.gameData;
         
         // IMPORTANTE: Obtener el jugador que fue marcado como eliminado en la votación
-        // No recalcular aquí, usar el que ya fue seleccionado
         const eliminatedPlayer = gameData.players.find(p => p.justEliminated);
         
         if (!eliminatedPlayer) {
@@ -503,6 +502,9 @@ const Pages = {
         const remainingPlayers = gameData.players.filter(p => !p.eliminated);
         const remainingImpostors = remainingPlayers.filter(p => p.isImpostor).length;
         const remainingInnocents = remainingPlayers.filter(p => !p.isImpostor).length;
+        
+        // Obtener TODOS los impostores del juego
+        const allImpostors = gameData.players.filter(p => p.isImpostor);
         
         console.log(`📊 Estado del juego:`);
         console.log(`   Jugadores restantes: ${remainingPlayers.length}`);
@@ -563,6 +565,20 @@ const Pages = {
                                         <p>Palabra secreta: <strong>${gameData.secretWord}</strong></p>
                                         <p>Categoría: ${gameData.category.name}</p>
                                         <p>Rondas jugadas: <strong>${gameData.roundNumber || 1}</strong></p>
+                                        
+                                        <!-- Lista de impostores -->
+                                        <div class="impostors-reveal">
+                                            <h4 class="impostors-title">Los impostores eran:</h4>
+                                            <div class="impostors-list">
+                                                ${allImpostors.map(imp => `
+                                                    <div class="impostor-item ${imp.eliminated ? 'eliminated' : 'survived'}">
+                                                        <span class="impostor-avatar">${imp.name.charAt(0).toUpperCase()}</span>
+                                                        <span class="impostor-name">${imp.name}</span>
+                                                        ${imp.eliminated ? '<span class="impostor-status">❌ Eliminado</span>' : '<span class="impostor-status survived">✓ Sobrevivió</span>'}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 `
@@ -577,6 +593,20 @@ const Pages = {
                                         <p>Jugadores restantes: <strong>${remainingInnocents}</strong></p>
                                         <p>Palabra secreta era: <strong>${gameData.secretWord}</strong></p>
                                         <p>Rondas jugadas: <strong>${gameData.roundNumber || 1}</strong></p>
+                                        
+                                        <!-- Lista de impostores -->
+                                        <div class="impostors-reveal">
+                                            <h4 class="impostors-title">Los impostores fueron:</h4>
+                                            <div class="impostors-list">
+                                                ${allImpostors.map(imp => `
+                                                    <div class="impostor-item ${imp.eliminated ? 'eliminated' : 'survived'}">
+                                                        <span class="impostor-avatar">${imp.name.charAt(0).toUpperCase()}</span>
+                                                        <span class="impostor-name">${imp.name}</span>
+                                                        ${imp.eliminated ? '<span class="impostor-status">❌ Eliminado</span>' : '<span class="impostor-status survived">👑 Ganador</span>'}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 `
