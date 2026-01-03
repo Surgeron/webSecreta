@@ -1,0 +1,58 @@
+
+/* ============================================
+   FONDOS TRANSPARENTES EN TODAS LAS PÁGINAS
+   ============================================ */
+
+.reveal-page,
+.voting-page,
+.results-page,
+.config-page,
+.words-manager-page {
+    background: transparent !important;
+}
+
+.reveal-page .container,
+.voting-page .container,
+.results-page .container,
+.config-page .container,
+.words-manager-page .container {
+    background: transparent !important;
+}
+
+/* ============================================
+   FIX PARA MÓVIL - FONDO OSCURO FORZADO
+   ============================================ */
+
+@media (max-width: 768px) {
+    html {
+        background: #0a0a0a !important;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a1a 100%) !important;
+        background-attachment: fixed !important;
+    }
+    
+    body.no-scroll {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a1a 100%) !important;
+        background-attachment: fixed !important;
+    }
+    
+    #app {
+        background: transparent !important;
+    }
+    
+    /* Asegurar fondos transparentes en todas las páginas */
+    .reveal-page,
+    .voting-page,
+    .results-page,
+    .config-page,
+    .words-manager-page {
+        background: transparent !important;
+    }
+}

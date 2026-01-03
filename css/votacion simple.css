@@ -1,0 +1,233 @@
+
+/* ============================================
+   VOTACIÓN SIMPLIFICADA
+   ============================================ */
+
+.voting-simplified .voting-header {
+    text-align: center;
+    padding: 30px 20px;
+    margin-bottom: 30px;
+}
+
+.players-remaining {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 20px;
+    margin-top: 15px;
+}
+
+.remaining-icon {
+    font-size: 1.5rem;
+}
+
+.remaining-text {
+    font-size: 1rem;
+    color: #06b6d4;
+    font-weight: 600;
+}
+
+.players-elimination-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+}
+
+.elimination-player-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.elimination-player-card:hover {
+    transform: translateY(-5px);
+    border-color: #ef4444;
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+}
+
+.elimination-player-card.selected {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+    box-shadow: 0 10px 40px rgba(239, 68, 68, 0.5);
+    transform: translateY(-5px) scale(1.05);
+}
+
+.elimination-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: white;
+    margin: 0 auto 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.elimination-player-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.elimination-icon {
+    font-size: 2rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.elimination-player-card:hover .elimination-icon {
+    opacity: 1;
+}
+
+#eliminationConfirmContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+    z-index: 100;
+}
+
+.elimination-confirmation {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.elimination-confirm-text {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 25px;
+}
+
+.elimination-name {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.elimination-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-cancel-elimination,
+.btn-confirm-elimination {
+    padding: 15px 40px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel-elimination {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+.btn-cancel-elimination:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-confirm-elimination {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: none;
+    color: white;
+}
+
+.btn-confirm-elimination:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(239, 68, 68, 0.5);
+}
+
+/* Responsive móvil */
+@media (max-width: 768px) {
+    .start-title {
+        font-size: 2rem;
+    }
+
+    .selected-name {
+        font-size: 2rem;
+    }
+
+    .start-instructions {
+        grid-template-columns: 1fr;
+    }
+
+    .start-actions {
+        flex-direction: column;
+    }
+
+    .btn-reselect,
+    .btn-start-discussion {
+        width: 100%;
+    }
+
+    .players-elimination-grid {
+        display: flex;
+        flex-direction: column;
+        max-height: 500px; /* Altura máxima del contenedor */
+        overflow-y: auto; /* Scroll vertical */
+        padding-right: 10px; /* Espacio para la barra de scroll */
+    }
+
+    .elimination-player-card {
+        /* Ajustamos el padding para que no sea tan alto */
+        padding: 15px 20px;
+        
+        /* Opcional: Si quieres que el contenido se vea como fila (avatar a la izquierda, texto a la derecha) */
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 20px;
+    }
+
+
+
+    .elimination-buttons {
+        flex-direction: column;
+    }
+
+    .btn-cancel-elimination,
+    .btn-confirm-elimination {
+        width: 100%;
+    }
+}
+
+/* Indicador de ronda */
+.round-indicator {
+    display: inline-block;
+    padding: 10px 25px;
+    background: rgba(6, 182, 212, 0.2);
+    border: 2px solid #06b6d4;
+    border-radius: 20px;
+    color: #06b6d4;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    animation: fadeInDown 0.3s ease;
+}
